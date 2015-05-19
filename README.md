@@ -1,6 +1,55 @@
 # ntu-ai-2015-spring
 NTU Introduction to AI 2015 spring Final Project
 
+
+## Pseudo-code
+
+```
+class Supervisor:
+  state = new State
+  cars = state.getCars()
+
+  for car in cars:
+    nextAction = AI.nextStep(car.id, state)
+    state = state.getStateByAction(car.id, nextAction)
+    Drawer.draw(state)
+
+class State
+  - map: a static or dynamic matrix indicating the world
+  - cars: including cars position
+
+  def getMap()
+    return current map matrix
+
+  def getCars()
+    return all cars
+
+  def getSucc(carId)
+    return possible actions
+
+  def getStateByAction(carId, action)
+    move carId according to the action
+    # dynamics happen here
+    return a new State
+
+
+class Drawer
+  def draw(state)
+    draw according to
+      - state.getMap()
+      - state.getCars()
+
+class AI
+  def getNextAction(carId, state)
+    actions = state.getSucc(carId)
+
+    for action in actions:
+      nextState = state.getStateByAction(carId, action)
+
+    return next action according to certain Algorithm
+
+```
+
 ## Coding Style
 
 We are mainly using Python, and Python cares the coding style very much. So
