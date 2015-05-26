@@ -1,41 +1,43 @@
 import numpy as np
 import random
 import copy
-class car :
-    #car.type : 'vehicle', 'taxi', 'ambulance'
-    #car.location : (x,y)
-    #car.start : (x,y)
-    #car.destination : (x,y)
-    #car.priority : 'high', 'medium', 'low'
-    #car.speed : 1, 2, 3
-    id = 0
-    type = 'vehicle'
-    location = (0,0)
-    start = (0,0)
-    destination = (0,0)
+
+
+class Car(object):
+    # car.type : 'vehicle', 'taxi', 'ambulance'
+    # car.location : (x,y)
+    # car.start : (x,y)
+    # car.destination : (x,y)
+    # car.priority : 'high', 'medium', 'low'
+    # car.speed : 1, 2, 3
+
+    id_ = 0
+    type_ = 'vehicle'
+    location = (0, 0)
+    start = (0, 0)
+    destination = (0, 0)
     priority = 0
     speed = 1
-    def __init__(self,new_id,new_type,new_location,new_start,new_destination,new_priority,new_speed):
-        self.id  = new_id
-        self.type = new_type
+
+    def __init__(self, new_id, new_type, new_location, new_start,
+                 new_destination, new_priority, new_speed):
+        self.id_ = new_id
+        self.type_ = new_type
         self.location = new_location
         self.start = new_start
         self.destination = new_destination
         self.priority = new_priority
         self.speed = new_speed
-        #print '###LOG### : A car has been constructed'
+        # print '###LOG### : A car has been constructed'
+
     def toString(self):
         print self.type,',',self.location,',',self.start,',',self.destination,',',self.priority,',',self.speed
 
+    def getId(self):
+        return self.id_
 
-class State:
-    #- map: a static or dynamic matrix indicating the world
-    #- cars: including cars position
-    currentMap = []
-    cars = []
-    mapMaxX = 0
-    mapMaxY = 0
 
+class State(object):
     ######################
     #  In map
     #  -2...-n = obstacles
@@ -45,6 +47,9 @@ class State:
 
     def __init__(self, width=20, height=20):
         print '__init__(self)'
+        self.currentMap = None
+        self.mapMaxX = 0
+        self.mapMaxY = 0
         self._generateMap(width, height)
         self.cars_ = {}
 
@@ -59,33 +64,33 @@ class State:
     def getCars(self):
         return self.cars_
 
-    def getCarById(self, id):
-        return self.cars_[id]
+    def getCarById(self, carId):
+        return self.cars_[carId]
 
     #Done
-    def getSucc(self,carId):
+    def getSucc(self, carId):
         actions = []
         ##north
-        nextX = self.cars[carId].location[0]-1
-        nextY = self.cars[carId].location[1]
+        nextX = self.cars_[carId].location[0]-1
+        nextY = self.cars_[carId].location[1]
         if nextX >=0 :
             if self.currentMap[nextX][nextY] == -1 :
                 actions.append('north')
         ##south
-        nextX = self.cars[carId].location[0]+1
-        nextY = self.cars[carId].location[1]
-        if nextX <self.mapMaxX :
+        nextX = self.cars_[carId].location[0]+1
+        nextY = self.cars_[carId].location[1]
+        if nextX < self.mapMaxX:
             if self.currentMap[nextX][nextY] == -1 :
                 actions.append('south')
         ##west
-        nextX = self.cars[carId].location[0]
-        nextY = self.cars[carId].location[1]-1
+        nextX = self.cars_[carId].location[0]
+        nextY = self.cars_[carId].location[1]-1
         if nextY >=0 :
             if self.currentMap[nextX][nextY] == -1 :
                 actions.append('west')
         ##east
-        nextX = self.cars[carId].location[0]
-        nextY = self.cars[carId].location[1]+1
+        nextX = self.cars_[carId].location[0]
+        nextY = self.cars_[carId].location[1]+1
         if nextY <self.mapMaxY :
             if self.currentMap[nextX][nextY] == -1 :
                 actions.append('east')
@@ -96,17 +101,17 @@ class State:
     def getStateByAction(self,carId, action):
         new_state = copy.deepcopy(self)
         if action is 'north':
-            new_state.currentMap[ self.cars[carId].location[0] ][ self.cars[carId].location[1]  ] = -1
-            new_state.currentMap[ self.cars[carId].location[0]-1 ][ self.cars[carId].location[1]  ]   = carId
+            new_state.currentMap[ self.cars_[carId].location[0] ][ self.cars_[carId].location[1]  ] = -1
+            new_state.currentMap[ self.cars_[carId].location[0]-1 ][ self.cars_[carId].location[1]  ]   = carId
         if action is 'south':
-            new_state.currentMap[ self.cars[carId].location[0] ][ self.cars[carId].location[1]  ] = -1
-            new_state.currentMap[ self.cars[carId].location[0]+1 ][ self.cars[carId].location[1]  ]   = carId
+            new_state.currentMap[ self.cars_[carId].location[0] ][ self.cars_[carId].location[1]  ] = -1
+            new_state.currentMap[ self.cars_[carId].location[0]+1 ][ self.cars_[carId].location[1]  ]   = carId
         if action is 'east':
-            new_state.currentMap[ self.cars[carId].location[0] ][ self.cars[carId].location[1]  ] = -1
-            new_state.currentMap[ self.cars[carId].location[0] ][ self.cars[carId].location[1]+1  ]   = carId
+            new_state.currentMap[ self.cars_[carId].location[0] ][ self.cars_[carId].location[1]  ] = -1
+            new_state.currentMap[ self.cars_[carId].location[0] ][ self.cars_[carId].location[1]+1  ]   = carId
         if action is 'west':
-            new_state.currentMap[ self.cars[carId].location[0] ][ self.cars[carId].location[1]  ] = -1
-            new_state.currentMap[ self.cars[carId].location[0] ][ self.cars[carId].location[1]-1  ]   = carId
+            new_state.currentMap[ self.cars_[carId].location[0] ][ self.cars_[carId].location[1]  ] = -1
+            new_state.currentMap[ self.cars_[carId].location[0] ][ self.cars_[carId].location[1]-1  ]   = carId
         return new_state
         #print 'getStateByAction(carId, action)'
         #move carId according to the action
@@ -118,7 +123,7 @@ class State:
    #################################################################
     def generateCars(self,n_cars):
 
-        for i in range( n_cars):
+        for i in range(n_cars):
             while True:
                 sx = random.choice(np.arange(self.mapMaxX))
                 sy = random.choice(np.arange(self.mapMaxY))
@@ -128,7 +133,9 @@ class State:
                 if self.currentMap[sx][sy]== -1:
                     break
 
-            self.cars.append(  car(  i,'vehicle',(sx,sy)  ,  (sx,sy)   ,  (dx,dy)  , 0 , 1)  )
+            newCar = Car(  i,'vehicle',(sx,sy)  ,  (sx,sy)   ,  (dx,dy)  , 0 , 1)
+
+            self.cars_[newCar.getId()] = newCar
             self.currentMap[sx][sy] = i
 
     def printMap(self):
@@ -151,12 +158,13 @@ if __name__ == '__main__':
     a = State()
     a.generateCars(n_cars)
     a.printMap()
-    for car in a.getCars():
-        print 'carid ',car.id
-        actions= a.getSucc(car.id)
+
+    for carId, car in enumerate(a.getCars()):
+        print 'carid ', carId
+        actions = a.getSucc(carId)
         for action in actions :
             print 'step :' ,action
-            a.getStateByAction(car.id,action).printMap()
+            a.getStateByAction(carId,action).printMap()
 
     #for c in a.getCars():
     #    c.toString()
