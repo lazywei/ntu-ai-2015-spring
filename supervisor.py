@@ -1,11 +1,20 @@
+import State
+import Drawer
+
 class Supervisor:
     # _map includes
     #    method for moving a car( e.g., map.moveCar(car, from, to) )
     # _cars includes the cars and it type, priority and speed
-    def __init__(self, gameState):
-        self.gameState = gameState
-        self.map = gameState.map
-        self.carList = gameState.carList
+    def __init__(self):
+        self.state = new State
+        self.cars = state.getCars()
+
+        # Initializing the remain moves of cars
+        self.carMovesRemain = []
+        for car in self.carList:
+            self.carMovesRemain.append(car.speed)
+
+
         # carList : a 'list' of 'car'
         # car :
         #    car.type : 'vehicle', 'taxi', 'ambulance'
@@ -18,17 +27,25 @@ class Supervisor:
         #    car.getNextLocation(gameState) : return next location of the car
 
     def start(self):
-        # Initialization
-        self.carMovesRemain = []
-        for car in self.carList:
-            self.carMovesRemain.append(car.speed)
+        
+        # for car in cars:
+        #     nextAction = AI.nextStep(car.id, state)
+        #     state = state.getStateByAction(car.id, nextAction)
+        #     Drawer.draw(state)
+        
 
         # Start
         currCarIdx = 0
-        self.carList[currCarIdx].move()
-        while(not self.isGoal()):
+        nextAction = AI.nextStep(currCarIdx, state)
+        state = state.getStateByAction(currCarIdx, nextAction)
+        Drawer.draw(state)
+
+        while(not state.isGoal()):
             nextCarIdx = self.getNextCarIdx(currCarIdx)
-            self.carList[nextCarIdx].move()
+            nextAction = AI.nextStep(currCarIdx, state)
+            state = state.getStateByAction(currCarIdx, nextAction)
+            Drawer.draw(state)
+
 
     def isGoal(self):
         for car in self.carList:
