@@ -7,6 +7,9 @@ class Supervisor:
     state = state.getStateByAction(car.id, nextAction)
     Drawer.draw(state)"""
 
+from state import State
+from state import Car
+"""
 class State:
   #- map: a static or dynamic matrix indicating the world
   #- cars: including cars position
@@ -28,7 +31,7 @@ class State:
     # dynamics happen here
     #return a new State
       pass
-
+"""
 
 class Drawer:
   def draw(state):
@@ -50,14 +53,18 @@ class AI:
         """Search the node of least total cost first."""
         "*** YOUR CODE HERE ***"
 
-        from util import PriorityQueueWithFunction
-        from util import PriorityQueue
+        import imp
+        
+        foo = imp.load_source('PriorityQueue', './AI_ref/util.py')
+        
+        #from AI_ref/util import PriorityQueueWithFunction
+        #from AI_ref/util import PriorityQueue
 
         #import inspect
         #print inspect.getmembers(problem, predicate=inspect.ismethod)
         exp = {}
         # exp=1...added to queue, 2...poped from queue
-        st = PriorityQueue()
+        st = foo.PriorityQueue()
         re = []
 
 
@@ -92,18 +99,40 @@ class AI:
                     pass
         else:
             print "No route found"
+            #exit()
             return []
 
         return re
 
 
+"""-----------------------------------------------------------------------------
+simple test code for my script
+emulate the supervisor
+
+-----------------------------------------------------------------------------"""
+if __name__ == '__main__':
+    n_cars = 2
+    a = State()
+    a.generateCars(n_cars)
+    a.printMap()
+
+    for carId, car in enumerate(a.getCars()):
+        print 'carid ', carId
+        actions = a.getSucc(carId)
+        for action in actions :
+            print 'step :' ,action
+            a.getStateByAction(carId,action).printMap()
 
 
 
 
 
 
+"""-----------------------------------------------------------------------------
 
+
+
+-----------------------------------------------------------------------------"""
 
 
 
