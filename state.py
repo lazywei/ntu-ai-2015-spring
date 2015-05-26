@@ -7,13 +7,15 @@ class car :
     #car.destination : (x,y)
     #car.priority : 'high', 'medium', 'low'
     #car.speed : 1, 2, 3
+    id = 0
     type = 'vehicle'
     location = (0,0)
     start = (0,0)
     destination = (0,0)
     priority = 0
     speed = 1
-    def __init__(self,new_type,new_location,new_start,new_destination,new_priority,new_speed):
+    def __init__(self,new_id,new_type,new_location,new_start,new_destination,new_priority,new_speed):
+        self.id  = new_id
         self.type = new_type
         self.location = new_location
         self.start = new_start
@@ -29,15 +31,18 @@ class State:
     #- cars: including cars position
     currentMap = []
     cars = []
-    
+    mapMaxX = 0
+    mapMaxY = 0
     ###Need a function to read from map and decide, now hard coded.
-    mapMaxY = 20
-    mapMaxX = 30
+
     def __init__(self):
         print '__init__(self)'
 
     def loadMap(self):
         self.currentMap = np.loadtxt('map.out')
+        self.mapMaxX = len(self.currentMap)
+        self.mapMaxY = len(self.currentMap[0])
+
     def getMap(self):
         return self.currentMap
 
@@ -65,16 +70,18 @@ class State:
             
             dx = random.choice(np.arange(self.mapMaxX)) 
             dy = random.choice(np.arange(self.mapMaxY))
-        
-            self.cars.append(  car(  'vehicle',(sx,sy)  ,  (sx,sy)   ,  (dx,dy)  , 0 , 1)  )
-   
+            self.cars.append(  car(  i,'vehicle',(sx,sy)  ,  (sx,sy)   ,  (dx,dy)  , 0 , 1)  )
+
+            self.currentMap[sx][sy] = i
     def printMap(self,map):
         for row in map:
             for c in row:
                 if c == 0:
                     print "  ",
-                if c == -1:
+                elif c == -1:
                     print "XX",
+                else:
+                    print '%2d'%c,
             print '\n',
             
             
@@ -84,7 +91,7 @@ if __name__ == '__main__':
     a = State()
     a.loadMap()
     map = a.getMap()
+    a.generateCars(100)
     a.printMap(map)
-    a.generateCars(10)
-    for c in a.getCars():
-        c.toString()
+    #for c in a.getCars():
+    #    c.toString()
