@@ -151,6 +151,15 @@ class State(object):
                     print '%2d'%c,
             print '\n',
 
+   #################################################################
+   # Temporary function, help add for AI.py ??                     #
+   #################################################################
+    def isGoalState(self,carId):
+        if self.getCarById(carId).location == self.getCarById(carId).destination:
+            return True
+        else:
+            return False
+
 
 #Just my testing script down below
 #Simulating the supervisor

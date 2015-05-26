@@ -43,7 +43,7 @@ class Drawer:
 
 
 class AI:
-    def getNextAction(carId, state):
+    def getNextAction(self,carId, state):
         """if state.cars.search=="UCS":"""
         action = self.BFS(carId,state)
         return action
@@ -106,6 +106,16 @@ class AI:
 
 
 """-----------------------------------------------------------------------------
+temporary function for AI.py testing
+-----------------------------------------------------------------------------"""
+def TestIfGoal(state):
+    state.getCarById(0).position = state.getCarById(0).destination
+    print state.getCarById(0).position
+    print state.getCarById(0).destination
+    print state.isGoalState(0)
+
+
+"""-----------------------------------------------------------------------------
 simple test code for my script
 emulate the supervisor
 
@@ -116,13 +126,20 @@ if __name__ == '__main__':
     a.generateCars(n_cars)
     a.printMap()
 
-    for carId, car in enumerate(a.getCars()):
+    ai = AI()
+
+    TestIfGoal(a)
+    #action = ai.getNextAction(0, a)
+    print "YYYYYYY"
+    
+"""
+    for carId in range(len(a.getCars())):
         print 'carid ', carId
         actions = a.getSucc(carId)
         for action in actions :
             print 'step :' ,action
             a.getStateByAction(carId,action).printMap()
-
+"""
 
 
 
