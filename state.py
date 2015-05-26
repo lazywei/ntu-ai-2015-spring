@@ -103,6 +103,7 @@ class State(object):
         if action is 'north':
             new_state.currentMap[ self.cars_[carId].location[0] ][ self.cars_[carId].location[1]  ] = -1
             new_state.currentMap[ self.cars_[carId].location[0]-1 ][ self.cars_[carId].location[1]  ]   = carId
+            new_state.cars_[carId].location = ( new_state.cars_[carId].location[0]-1, new_state.cars_[carId].location[1] )    # Lai, change car position as well ?
         if action is 'south':
             new_state.currentMap[ self.cars_[carId].location[0] ][ self.cars_[carId].location[1]  ] = -1
             new_state.currentMap[ self.cars_[carId].location[0]+1 ][ self.cars_[carId].location[1]  ]   = carId
