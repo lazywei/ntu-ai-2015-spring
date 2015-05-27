@@ -2,6 +2,9 @@
 NTU Introduction to AI 2015 spring Final Project
 
 
+## Reference
+We haven't refer any lib or rep, yet.
+
 ## Pseudo-code
 
 ```
@@ -79,3 +82,5 @@ Instead, here are some basic and easy instruction for all team members:
   git rebase -i master
   ```
 - Commit message should be clear and concise.
+
+
