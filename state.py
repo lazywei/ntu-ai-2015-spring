@@ -100,21 +100,22 @@ class State(object):
 
     def getStateByAction(self,carId, action):
         new_state = copy.deepcopy(self)
+        curCar = self.cars_[carId]
         if action is 'north':
-            new_state.currentMap[ self.cars_[carId].location[0] ][ self.cars_[carId].location[1]  ] = -1
-            new_state.currentMap[ self.cars_[carId].location[0]-1 ][ self.cars_[carId].location[1]  ]   = carId
+            new_state.currentMap[ curCar.location[0] ][ curCar.location[1]  ] = -1
+            new_state.currentMap[ curCar.location[0]-1 ][ curCar.location[1]  ]   = carId
             new_state.cars_[carId].location = ( new_state.cars_[carId].location[0]-1, new_state.cars_[carId].location[1] )    # Lai, change car position as well ?
         if action is 'south':
-            new_state.currentMap[ self.cars_[carId].location[0] ][ self.cars_[carId].location[1]  ] = -1
-            new_state.currentMap[ self.cars_[carId].location[0]+1 ][ self.cars_[carId].location[1]  ]   = carId
+            new_state.currentMap[ curCar.location[0] ][ curCar.location[1]  ] = -1
+            new_state.currentMap[ curCar.location[0]+1 ][ curCar.location[1]  ]   = carId
             new_state.cars_[carId].location = ( new_state.cars_[carId].location[0]+1, new_state.cars_[carId].location[1] )    # Lai, change car position as well ?
         if action is 'east':
-            new_state.currentMap[ self.cars_[carId].location[0] ][ self.cars_[carId].location[1]  ] = -1
-            new_state.currentMap[ self.cars_[carId].location[0] ][ self.cars_[carId].location[1]+1  ]   = carId
+            new_state.currentMap[ curCar.location[0] ][ curCar.location[1]  ] = -1
+            new_state.currentMap[ curCar.location[0] ][ curCar.location[1]+1  ]   = carId
             new_state.cars_[carId].location = ( new_state.cars_[carId].location[0], new_state.cars_[carId].location[1]+1 )    # Lai, change car position as well ?
         if action is 'west':
-            new_state.currentMap[ self.cars_[carId].location[0] ][ self.cars_[carId].location[1]  ] = -1
-            new_state.currentMap[ self.cars_[carId].location[0] ][ self.cars_[carId].location[1]-1  ]   = carId
+            new_state.currentMap[ curCar.location[0] ][ curCar.location[1]  ] = -1
+            new_state.currentMap[ curCar.location[0] ][ curCar.location[1]-1  ]   = carId
             new_state.cars_[carId].location = ( new_state.cars_[carId].location[0], new_state.cars_[carId].location[1]-1 )    # Lai, change car position as well ?
         return new_state
         #print 'getStateByAction(carId, action)'
