@@ -69,16 +69,23 @@ class AI:
 
 
         #state = problem.getStartState()
+        coord = state.getCarById(carId).location
         st.push( (state,[]), 0 )
-        exp[state] = 1
+        exp[coord] = 1
+
+        #"""
+        print "start point : ",; print coord
+        print "dest point : ",; print state.getCarById(carId).destination
+        #"""
         
         while st.isEmpty()==False:
             tmp = st.pop()
             state = tmp[0]
             move = tmp[1]
-            #print problem.getCostOfActions(move)
+            coord = state.getCarById(carId).location
+            print coord
             
-            exp[state] = 2
+            exp[coord] = 2
 
             if state.isGoalState(carId)==True:
                 re = move
@@ -87,31 +94,39 @@ class AI:
             adj = state.getSucc(carId)
             for it in adj:
                 Nstate = state.getStateByAction(carId, it)
-                if ( Nstate in exp ) == False:
+                Ncoord = Nstate.getCarById(carId).location
+                if ( Ncoord in exp ) == False:
                     tmpMove = list(move)
                     tmpMove.append(it)
                     #st.push( (Nstate,tmpMove), state.getCostOfActions(tmpMove) )
                     st.push( (Nstate,tmpMove), len(tmpMove) )
-                    exp[Nstate] = 1
-                elif exp[Nstate]==1:
+                    exp[Ncoord] = 1
+                    print "add %r"%(Ncoord,)
+                elif exp[Ncoord]==1:
                     pass
-                elif exp[Nstate]==2:
+                elif exp[Ncoord]==2:
                     pass
         else:
-            print "No route found"
+            #print "No route found"
             #exit()
             return []
 
-        return re
+        return re[0]
 
 
 """-----------------------------------------------------------------------------
 temporary function for AI.py testing
 -----------------------------------------------------------------------------"""
 def TestIfGoal(state):
-    state.getCarById(0).position = state.getCarById(0).destination
-    print state.getCarById(0).position
+    print state.getCarById(0).location
     print state.getCarById(0).destination
+    state.getCarById(0).location = state.getCarById(0).destination
+    print state.getCarById(0).location
+    print state.getCarById(0).destination
+    if state.getCarById(0).location==state.getCarById(0).destination:
+        print True
+    else:
+        print False
     print state.isGoalState(0)
 
 
@@ -128,9 +143,14 @@ if __name__ == '__main__':
 
     ai = AI()
 
-    TestIfGoal(a)
-    #action = ai.getNextAction(0, a)
-    print "YYYYYYY"
+    #TestIfGoal(a)
+    action = ai.getNextAction(0, a)
+    if action==[]:
+        print "No route"
+    else:
+        print "Action: ",; print action
+        print "0's turn, next state : ",; print a.getStateByAction(0,action).getCarById(0).location
+    print "End of script"
     
 """
     for carId in range(len(a.getCars())):

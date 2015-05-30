@@ -107,12 +107,15 @@ class State(object):
         if action is 'south':
             new_state.currentMap[ self.cars_[carId].location[0] ][ self.cars_[carId].location[1]  ] = -1
             new_state.currentMap[ self.cars_[carId].location[0]+1 ][ self.cars_[carId].location[1]  ]   = carId
+            new_state.cars_[carId].location = ( new_state.cars_[carId].location[0]+1, new_state.cars_[carId].location[1] )    # Lai, change car position as well ?
         if action is 'east':
             new_state.currentMap[ self.cars_[carId].location[0] ][ self.cars_[carId].location[1]  ] = -1
             new_state.currentMap[ self.cars_[carId].location[0] ][ self.cars_[carId].location[1]+1  ]   = carId
+            new_state.cars_[carId].location = ( new_state.cars_[carId].location[0], new_state.cars_[carId].location[1]+1 )    # Lai, change car position as well ?
         if action is 'west':
             new_state.currentMap[ self.cars_[carId].location[0] ][ self.cars_[carId].location[1]  ] = -1
             new_state.currentMap[ self.cars_[carId].location[0] ][ self.cars_[carId].location[1]-1  ]   = carId
+            new_state.cars_[carId].location = ( new_state.cars_[carId].location[0], new_state.cars_[carId].location[1]-1 )    # Lai, change car position as well ?
         return new_state
         #print 'getStateByAction(carId, action)'
         #move carId according to the action
@@ -155,6 +158,12 @@ class State(object):
    # Temporary function, help add for AI.py ??                     #
    #################################################################
     def isGoalState(self,carId):
+        """
+        print "inside isGoalState"
+        print "carId = "; print carId
+        print self.getCarById(carId).location
+        print self.getCarById(carId).destination
+        """
         if self.getCarById(carId).location == self.getCarById(carId).destination:
             return True
         else:
