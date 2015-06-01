@@ -1,19 +1,33 @@
-import State
-import Drawer
+import numpy as np
+import random
+
+from state import State
+from state import Car
+
+from AI import AI
+# import Drawer
 
 class Supervisor:
     # _map includes
     #    method for moving a car( e.g., map.moveCar(car, from, to) )
     # _cars includes the cars and it type, priority and speed
-    def __init__(self):
-        self.state = new State
-        self.cars = state.getCars()
+    def __init__(self, _numberOfCars):
+        self.numberOfCars = _numberOfCars
+
+        self.state = State()
+        self.state.generateCars(5)
+        self.map = self.state.getMap()
+        self.cars = self.state.getCars()
+        
+
+        # AI
+        self.ai = AI()
 
         # Initializing the remain moves of cars
         self.carMovesRemain = []
-        for car in self.carList:
-            self.carMovesRemain.append(car.speed)
-
+        for carID in range(numberOfCars):
+            self.carMovesRemain.append(self.cars[carID].speed)
+            
 
         # carList : a 'list' of 'car'
         # car :
@@ -48,8 +62,8 @@ class Supervisor:
 
 
     def isGoal(self):
-        for car in self.carList:
-            if(car.location == car.destination):
+        for carID in range(self.numberOfCars):
+            if(self.state.isGoalState(carID)):
                 return True
         return False
 
@@ -70,5 +84,87 @@ class Supervisor:
         pass
 
 
+    def showCarsInfo(self):
+        if(len(self.cars) > 0):
+            for car in self.cars:
+                print '---------------'
+                print 'ID: ', car.id_
+                print 'type: ', car.type_
+                print 'location: ', car.location
+                print 'start: ', car.start
+                print 'destination: ', car.destination
+                print 'priority: ', car.priority
+                print 'speed: ', car.speed
+        else:
+            print 'In showCarsInfo(): There is no any car!'
+
+    
+
+    #################################################################
+    # Deprecated                                                    #
+    #################################################################
+
+    # def printMap(self):
+    #     # map = self.map
+    #     for row in self.map:
+    #         for c in row:
+    #             if c == -1:
+    #                 print "  ",
+    #             elif c == -2:
+    #                 print "XX",
+    #             else:
+    #                 print '%2d'%c,
+    #         print '\n',
+
+
+    # def generateCars(self, numberOfCars):
+    #     if(numberOfCars > 0):
+    #         for carID in range(numberOfCars):
+    #             while True:
+    #                 sx = random.choice(np.arange(self.mapMaxX))
+    #                 sy = random.choice(np.arange(self.mapMaxY))
+
+    #                 dx = random.choice(np.arange(self.mapMaxX))
+    #                 dy = random.choice(np.arange(self.mapMaxY))
+    #                 if self.map[sx][sy]== -1:
+    #                     break
+
+    #             newCar = Car(carID, 'vehicle', (sx,sy), (sx,sy), (dx,dy), 0, 1)
+    #             self.cars.append(newCar)
+    #             self.map[sx][sy] = carID
+    #     else:
+    #         print
+    #         'In generateCars(): Wrong argument: numberOfCars <-', numberOfCars
+
+
+
 if __name__ == '__main__':
-    pass
+    numberOfCars = 5
+    mSupervisor = Supervisor(numberOfCars)
+    mState = mSupervisor.state
+    mState.printMap()
+    
+    
+    mAI = mSupervisor.ai
+
+    counter = 0
+    while not mSupervisor.isGoal() or counter < 100:
+        nextAction = mAI.getNextAction(0, mState)
+        if nextAction == []:
+            print 'Empty array'
+        mState = mState.getStateByAction(0, nextAction)
+        counter = counter + 1
+
+    mState.printMap()
+    
+
+
+
+
+
+
+
+
+
+
+
