@@ -11,14 +11,6 @@ class Car(object):
     # car.priority : 'high', 'medium', 'low'
     # car.speed : 1, 2, 3
 
-    id_ = 0
-    type_ = 'vehicle'
-    location = (0, 0)
-    start = (0, 0)
-    destination = (0, 0)
-    priority = 0
-    speed = 1
-
     def __init__(self, new_id, new_type, new_location, new_start,
                  new_destination, new_priority, new_speed):
         self.id_ = new_id
@@ -31,7 +23,9 @@ class Car(object):
         # print '###LOG### : A car has been constructed'
 
     def toString(self):
-        print self.type,',',self.location,',',self.start,',',self.destination,',',self.priority,',',self.speed
+        print "{}, {}, {}, {}, {}, {}".format(
+            self.type_, self.location, self.start,
+            self.destination, self.priority, self.speed)
 
     def getId(self):
         return self.id_
@@ -67,38 +61,30 @@ class State(object):
     def getCarById(self, carId):
         return self.cars_[carId]
 
-    #Done
     def getSucc(self, carId):
         actions = []
-        ##north
-        nextX = self.cars_[carId].location[0]-1
-        nextY = self.cars_[carId].location[1]
-        if nextX >=0 :
-            if self.currentMap[nextX][nextY] == -1 :
-                actions.append('north')
-        ##south
-        nextX = self.cars_[carId].location[0]+1
-        nextY = self.cars_[carId].location[1]
-        if nextX < self.mapMaxX:
-            if self.currentMap[nextX][nextY] == -1 :
-                actions.append('south')
-        ##west
-        nextX = self.cars_[carId].location[0]
-        nextY = self.cars_[carId].location[1]-1
-        if nextY >=0 :
-            if self.currentMap[nextX][nextY] == -1 :
-                actions.append('west')
-        ##east
-        nextX = self.cars_[carId].location[0]
-        nextY = self.cars_[carId].location[1]+1
-        if nextY <self.mapMaxY :
-            if self.currentMap[nextX][nextY] == -1 :
-                actions.append('east')
 
+        directions = {
+            'north': [-1, 0],
+            'south': [1, 0],
+            'west': [0, -1],
+            'east': [0, 1]
+        }
+
+        for direction in directions:
+            offset = directions[direction]
+            nextX = self.cars_[carId].location[0] + offset[0]
+            nextY = self.cars_[carId].location[1] + offset[1]
+
+            # Check if the move is legal
+            if (0 <= nextX < self.mapMaxX and 0 <= nextY < self.mapMaxY
+                    and self.currentMap[nextX][nextY] == -1):
+
+                actions.append(direction)
 
         return actions
 
-    def getStateByAction(self,carId, action):
+    def getStateByAction(self, carId, action):
         new_state = copy.deepcopy(self)
 
         curCar = self.cars_[carId]
