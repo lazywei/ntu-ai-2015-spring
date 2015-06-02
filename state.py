@@ -54,12 +54,12 @@ class State(object):
 
         # Set obstacles ... should export the number of obstacles as an arg
         for i in range(10):
-            randX = np.random.randint(width)
-            randY = np.random.randint(height)
+            randX = np.random.randint(height)
+            randY = np.random.randint(width)
 
             # TODO: Add more rules here
-            if curMap[randX, randY] == 0:
-                curMap[randX, randY] = -1
+            if curMap[randY, randX] == 0:
+                curMap[randY, randX] = -1
 
         # Make curMap compatible with the entry definition.
         curMap = curMap * -1 - 1
