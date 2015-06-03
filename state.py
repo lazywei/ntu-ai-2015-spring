@@ -1,6 +1,9 @@
 import numpy as np
 import random
 import copy
+
+obstacle =-2
+road = -1
 class car :
     #car.type : 'vehicle', 'taxi', 'ambulance'
     #car.location : (x,y)
@@ -35,6 +38,7 @@ class State:
     mapMaxX = 0
     mapMaxY = 0
     
+
     ######################
     #  In map 
     #  -2...-n = obstacles
@@ -66,25 +70,25 @@ class State:
         nextX = self.cars[carId].location[0]-1
         nextY = self.cars[carId].location[1]
         if nextX >=0 :
-            if self.currentMap[nextX][nextY] == -1 : 
+            if self.currentMap[nextX][nextY] == road : 
                 actions.append('north')
         ##south
         nextX = self.cars[carId].location[0]+1
         nextY = self.cars[carId].location[1]
         if nextX <self.mapMaxX :
-            if self.currentMap[nextX][nextY] == -1 : 
+            if self.currentMap[nextX][nextY] == road : 
                 actions.append('south')
         ##west
         nextX = self.cars[carId].location[0]
         nextY = self.cars[carId].location[1]-1
         if nextY >=0 :
-            if self.currentMap[nextX][nextY] == -1 : 
+            if self.currentMap[nextX][nextY] == road : 
                 actions.append('west')
         ##east
         nextX = self.cars[carId].location[0]
         nextY = self.cars[carId].location[1]+1
         if nextY <self.mapMaxY :
-            if self.currentMap[nextX][nextY] == -1 : 
+            if self.currentMap[nextX][nextY] == road : 
                 actions.append('east')
                 
                       
@@ -93,22 +97,18 @@ class State:
     def getStateByAction(self,carId, action):
         new_state = copy.deepcopy(self)
         if action is 'north':
-            new_state.currentMap[ self.cars[carId].location[0] ][ self.cars[carId].location[1]  ] = -1
+            new_state.currentMap[ self.cars[carId].location[0] ][ self.cars[carId].location[1]  ] = road
             new_state.currentMap[ self.cars[carId].location[0]-1 ][ self.cars[carId].location[1]  ]   = carId
         if action is 'south':
-            new_state.currentMap[ self.cars[carId].location[0] ][ self.cars[carId].location[1]  ] = -1
+            new_state.currentMap[ self.cars[carId].location[0] ][ self.cars[carId].location[1]  ] = road
             new_state.currentMap[ self.cars[carId].location[0]+1 ][ self.cars[carId].location[1]  ]   = carId
         if action is 'east':
-            new_state.currentMap[ self.cars[carId].location[0] ][ self.cars[carId].location[1]  ] = -1
+            new_state.currentMap[ self.cars[carId].location[0] ][ self.cars[carId].location[1]  ] = road
             new_state.currentMap[ self.cars[carId].location[0] ][ self.cars[carId].location[1]+1  ]   = carId
         if action is 'west':
-            new_state.currentMap[ self.cars[carId].location[0] ][ self.cars[carId].location[1]  ] = -1
+            new_state.currentMap[ self.cars[carId].location[0] ][ self.cars[carId].location[1]  ] = road
             new_state.currentMap[ self.cars[carId].location[0] ][ self.cars[carId].location[1]-1  ]   = carId
         return new_state
-        #print 'getStateByAction(carId, action)'
-        #move carId according to the action
-        # dynamics happen here
-        #return a new State
         
    #################################################################
    # Temporary function, just for testing State.py's functionality #
@@ -122,7 +122,7 @@ class State:
             
                 dx = random.choice(np.arange(self.mapMaxX)) 
                 dy = random.choice(np.arange(self.mapMaxY))
-                if self.currentMap[sx][sy]== -1:
+                if self.currentMap[sx][sy]== road:
                     break
             
             self.cars.append(  car(  i,'vehicle',(sx,sy)  ,  (sx,sy)   ,  (dx,dy)  , 0 , 1)  )
@@ -131,9 +131,9 @@ class State:
         map = self.currentMap
         for row in map:
             for c in row:
-                if c == -1:
+                if c == road:
                     print "  ",
-                elif c == -2:
+                elif c == obstacle:
                     print "XX",
                 else:
                     print '%2d'%c,
