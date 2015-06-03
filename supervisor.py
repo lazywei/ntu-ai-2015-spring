@@ -5,6 +5,10 @@ from state import State
 from state import Car
 
 from AI import AI
+import os
+import time
+
+
 # import Drawer
 
 class Supervisor:
@@ -143,21 +147,22 @@ class Supervisor:
 
 
 if __name__ == '__main__':
-    numberOfCars = 1
+    numberOfCars = 20
     mSupervisor = Supervisor(numberOfCars)
     mState = mSupervisor.state
     mAI = mSupervisor.ai
     counter = 0
-    
-    while (not mSupervisor.isGoal()) or (counter < 5):
-        nextAction = mAI.getNextAction(0, mState)
-        print nextAction
-        #if nextAction == []:
-        #    print 'Empty array'
-        mState = mState.getStateByAction(0, nextAction)
-        counter = counter + 1 
-        mState.printMap()             
+    maxTurns = 2000
+    while (not mSupervisor.isGoal())  and   (counter < maxTurns):
+        for car_i in range(numberOfCars):
 
+            nextAction = mAI.getNextAction(car_i, mState)
+            mState = mState.getStateByAction(car_i, nextAction)
+            counter = counter + 1 
+        
+            os.system('clear')
+            mState.printMap()             
+            time.sleep(0.1)
 
 
 

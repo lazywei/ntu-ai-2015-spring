@@ -40,7 +40,7 @@ class State(object):
     ######################
 
     def __init__(self, width=20, height=20):
-        print '__init__(self)'
+        #print '__init__(self)'
         self.currentMap = None
         self.mapMaxX = height
         self.mapMaxY = width
@@ -51,24 +51,16 @@ class State(object):
         # self.currentMap = np.loadtxt('map.out')
         
         curMap = np.zeros((width, height))
-        '''
-        # Set obstacles ... should export the number of obstacles as an arg
-        for i in range(10):
-            randX = np.random.randint(height)
-            randY = np.random.randint(width)
-
-            # TODO: Add more rules here
-            if curMap[randY, randX] == 0:
-                curMap[randY, randX] = -1
-
-        # Make curMap compatible with the entry definition.
-        curMap = curMap*-1 - 1
+        
+        self.currentMap = np.loadtxt('map.out')
+        self.mapMaxX = len(self.currentMap)
+        self.mapMaxY = len(self.currentMap[0]) 
         '''
         curMap = curMap-1
         self.currentMap = curMap
         self.mapMaxX = height
         self.mapMaxY = width
-
+        '''
     def getMap(self):
         return self.currentMap
 
@@ -112,18 +104,22 @@ class State(object):
             new_state.currentMap[curCarX][curCarY] = -1
             new_state.currentMap[curCarX-1][curCarY] = carId
             new_state.cars_[carId].location = (new_state.cars_[carId].location[0]-1, new_state.cars_[carId].location[1])    # Lai, change car position as well ?
-        if action is 'south':
+        elif action is 'south':
             new_state.currentMap[curCarX][curCarY] = -1
             new_state.currentMap[curCarX+1][curCarY] = carId
             new_state.cars_[carId].location = (new_state.cars_[carId].location[0]+1, new_state.cars_[carId].location[1])    # Lai, change car position as well ?
-        if action is 'east':
+        elif action is 'east':
             new_state.currentMap[curCarX][curCarY] = -1
             new_state.currentMap[curCarX][curCarY+1] = carId
             new_state.cars_[carId].location = (new_state.cars_[carId].location[0], new_state.cars_[carId].location[1]+1)    # Lai, change car position as well ?
-        if action is 'west':
+        elif action is 'west':
             new_state.currentMap[curCarX][curCarY] = -1
             new_state.currentMap[curCarX][curCarY-1] = carId
             new_state.cars_[carId].location = (new_state.cars_[carId].location[0], new_state.cars_[carId].location[1]-1)    # Lai, change car position as well ?
+        
+        
+         #DO nothing, no route found!
+
         return new_state
         #print 'getStateByAction(carId, action)'
         #move carId according to the action
@@ -142,7 +138,7 @@ class State(object):
 
                 dx = random.choice(np.arange(self.mapMaxX))
                 dy = random.choice(np.arange(self.mapMaxY))
-                if self.currentMap[sx][sy]== -1:
+                if self.currentMap[sx][sy] and self.currentMap[dx][dy]  == -1:
                     break
 
             newCar = Car(  i,'vehicle',(sx,sy)  ,  (sx,sy)   ,  (dx,dy)  , 0 , 1)
