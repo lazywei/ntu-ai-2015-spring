@@ -162,7 +162,7 @@ if __name__ == '__main__':
         
             os.system('clear')
             mState.printMap()             
-            time.sleep(0.1)
+            time.sleep(0.05)
 
 
 
