@@ -40,7 +40,6 @@ class State(object):
     ######################
 
     def __init__(self, width=20, height=20):
-        #print '__init__(self)'
         self.currentMap = None
         self.mapMaxX = height
         self.mapMaxY = width
@@ -48,19 +47,24 @@ class State(object):
         self.cars_ = {}
 
     def _generateMap(self, width, height):
-        # self.currentMap = np.loadtxt('map.out')
-        
-        curMap = np.zeros((width, height))
-        
-        self.currentMap = np.loadtxt('map.out')
+        curMap = np.zeros((width, height)) - 2
+
+        xs = np.random.randint(height / 2., size=5)
+        ys = np.random.randint(width / 2., size=5)
+
+        curMap[xs, :] = -1
+        curMap[:, ys] = -1
+
+        self.currentMap = curMap
         self.mapMaxX = len(self.currentMap)
-        self.mapMaxY = len(self.currentMap[0]) 
+        self.mapMaxY = len(self.currentMap[0])
         '''
         curMap = curMap-1
         self.currentMap = curMap
         self.mapMaxX = height
         self.mapMaxY = width
         '''
+
     def getMap(self):
         return self.currentMap
 
@@ -116,8 +120,8 @@ class State(object):
             new_state.currentMap[curCarX][curCarY] = -1
             new_state.currentMap[curCarX][curCarY-1] = carId
             new_state.cars_[carId].location = (new_state.cars_[carId].location[0], new_state.cars_[carId].location[1]-1)    # Lai, change car position as well ?
-        
-        
+
+
          #DO nothing, no route found!
 
         return new_state
