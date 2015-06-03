@@ -33,22 +33,22 @@ class State:
       pass
 """
 
-class Drawer:
-  def draw(state):
-    #draw according to
-      #- state.getMap()
-      #- state.getCars()
-      pass
-
-
 
 class AI:
     def getNextAction(self,carId, state):
         """if state.cars.search=="UCS":"""
-        action = self.BFS(carId,state)
+        action = self.randomWalk(carId,state)
+        
+
         return action
     def __init__(self):
         pass
+    def randomWalk(self,carId,state):
+        if len( state.getSucc(carId) ) ==0:
+            return ['none']
+        else :
+            return state.getSucc(carId)[0]
+    ''' 
     def BFS(self,carId,state):
         """Search the node of least total cost first."""
         "*** YOUR CODE HERE ***"
@@ -74,8 +74,8 @@ class AI:
         exp[coord] = 1
 
         #"""
-        print "start point : ",; print coord
-        print "dest point : ",; print state.getCarById(carId).destination
+        #print "start point : ",; print coord
+        #print "dest point : ",; print state.getCarById(carId).destination
         #"""
         
         while st.isEmpty()==False:
@@ -83,7 +83,7 @@ class AI:
             state = tmp[0]
             move = tmp[1]
             coord = state.getCarById(carId).location
-            print coord
+            #print coord
             
             exp[coord] = 2
 
@@ -101,7 +101,7 @@ class AI:
                     #st.push( (Nstate,tmpMove), state.getCostOfActions(tmpMove) )
                     st.push( (Nstate,tmpMove), len(tmpMove) )
                     exp[Ncoord] = 1
-                    print "add %r"%(Ncoord,)
+                    #print "add %r"%(Ncoord,)
                 elif exp[Ncoord]==1:
                     pass
                 elif exp[Ncoord]==2:
@@ -110,9 +110,9 @@ class AI:
             #print "No route found"
             #exit()
             return []
-
+        #return re
         return re[0]
-
+    '''
 
 """-----------------------------------------------------------------------------
 temporary function for AI.py testing

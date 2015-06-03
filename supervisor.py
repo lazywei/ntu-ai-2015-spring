@@ -15,7 +15,7 @@ class Supervisor:
         self.numberOfCars = _numberOfCars
 
         self.state = State()
-        self.state.generateCars(5)
+        self.state.generateCars(_numberOfCars)
         self.map = self.state.getMap()
         self.cars = self.state.getCars()
         
@@ -62,10 +62,14 @@ class Supervisor:
 
 
     def isGoal(self):
+        goal_counter = 0        
         for carID in range(self.numberOfCars):
             if(self.state.isGoalState(carID)):
-                return True
-        return False
+                goal_counter = goal_counter+1
+        if  goal_counter == self.numberOfCars:
+            return True
+        else:
+            return False
 
     def getNextCarIdx(self, currCarIdx):
         if(self.carMovesRemain[currCarIdx] > 0):
@@ -139,25 +143,20 @@ class Supervisor:
 
 
 if __name__ == '__main__':
-    numberOfCars = 5
+    numberOfCars = 1
     mSupervisor = Supervisor(numberOfCars)
     mState = mSupervisor.state
-    mState.printMap()
-    
-    
     mAI = mSupervisor.ai
-
     counter = 0
-    while not mSupervisor.isGoal() or counter < 100:
-        nextAction = mAI.getNextAction(0, mState)
-        if nextAction == []:
-            print 'Empty array'
-        mState = mState.getStateByAction(0, nextAction)
-        counter = counter + 1
-
-    mState.printMap()
     
-
+    while (not mSupervisor.isGoal()) or (counter < 5):
+        nextAction = mAI.getNextAction(0, mState)
+        print nextAction
+        #if nextAction == []:
+        #    print 'Empty array'
+        mState = mState.getStateByAction(0, nextAction)
+        counter = counter + 1 
+        mState.printMap()             
 
 
 

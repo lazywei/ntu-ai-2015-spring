@@ -42,16 +42,16 @@ class State(object):
     def __init__(self, width=20, height=20):
         print '__init__(self)'
         self.currentMap = None
-        self.mapMaxX = 0
-        self.mapMaxY = 0
+        self.mapMaxX = height
+        self.mapMaxY = width
         self._generateMap(width, height)
         self.cars_ = {}
 
     def _generateMap(self, width, height):
         # self.currentMap = np.loadtxt('map.out')
-
+        
         curMap = np.zeros((width, height))
-
+        '''
         # Set obstacles ... should export the number of obstacles as an arg
         for i in range(10):
             randX = np.random.randint(height)
@@ -62,11 +62,12 @@ class State(object):
                 curMap[randY, randX] = -1
 
         # Make curMap compatible with the entry definition.
-        curMap = curMap * -1 - 1
-
+        curMap = curMap*-1 - 1
+        '''
+        curMap = curMap-1
         self.currentMap = curMap
-        self.mapMaxX = width
-        self.mapMaxY = height
+        self.mapMaxX = height
+        self.mapMaxY = width
 
     def getMap(self):
         return self.currentMap
