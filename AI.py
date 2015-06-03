@@ -1,37 +1,8 @@
-class Supervisor:
-  #state = new State
-  #cars = state.getCars()
 
-  """for car in cars:
-    nextAction = AI.nextStep(car.id, state)
-    state = state.getStateByAction(car.id, nextAction)
-    Drawer.draw(state)"""
 
+import random
 from state import State
 from state import Car
-"""
-class State:
-  #- map: a static or dynamic matrix indicating the world
-  #- cars: including cars position
-
-  def getMap():
-    #return current map matrix
-      pass
-
-  def getCars():
-    #return all cars
-      pass
-
-  def getSucc(carId):
-    #return possible actions
-      pass
-
-  def getStateByAction(carId, action):
-    #move carId according to the action
-    # dynamics happen here
-    #return a new State
-      pass
-"""
 
 
 class AI:
@@ -47,7 +18,7 @@ class AI:
         if len( state.getSucc(carId) ) ==0:
             return ['none']
         else :
-            return state.getSucc(carId)[0]
+            return random.sample(state.getSucc(carId),1)[0]    
     ''' 
     def BFS(self,carId,state):
         """Search the node of least total cost first."""
