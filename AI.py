@@ -8,7 +8,8 @@ from state import Car
 class AI:
     def getNextAction(self,carId, state):
         """if state.cars.search=="UCS":"""
-        action = self.randomWalk(carId,state)
+        #action = self.randomWalk(carId,state)
+        action = self.BFS(carId,state)
         
 
         return action
@@ -19,10 +20,8 @@ class AI:
             return ['none']
         else :
             return random.sample(state.getSucc(carId),1)[0]    
-    ''' 
+    
     def BFS(self,carId,state):
-        """Search the node of least total cost first."""
-        "*** YOUR CODE HERE ***"
 
         import imp
         
@@ -80,10 +79,9 @@ class AI:
         else:
             #print "No route found"
             #exit()
-            return []
+            return ['none']
         #return re
         return re[0]
-    '''
 
 """-----------------------------------------------------------------------------
 temporary function for AI.py testing
@@ -109,6 +107,22 @@ emulate the supervisor
 if __name__ == '__main__':
     n_cars = 2
     a = State()
+    
+    # ---------------------------------------------------------------------------
+    # Lai, question1, how to generate cars ?
+
+    choice = 3
+
+    if choice==1:    
+    # choice 1, 1 block left, still could generate car
+        a.currentMap[:,:] = -2
+        a.currentMap[1,1] = -1
+    elif choice==2:
+    # choice 2, no block left, can't generate car
+        a.currentMap[:,:] = -2
+
+    # ---------------------------------------------------------------------------
+
     a.generateCars(n_cars)
     a.printMap()
 

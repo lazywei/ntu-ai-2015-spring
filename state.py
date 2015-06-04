@@ -115,19 +115,19 @@ class State(object):
         if action is 'north':
             new_state.currentMap[curCarX][curCarY] = -1
             new_state.currentMap[curCarX-1][curCarY] = carId
-            new_state.cars_[carId].location = (new_state.cars_[carId].location[0]-1, new_state.cars_[carId].location[1])    # Lai, change car position as well ?
+            new_state.cars_[carId].location = (new_state.cars_[carId].location[0]-1, new_state.cars_[carId].location[1]) 
         elif action is 'south':
             new_state.currentMap[curCarX][curCarY] = -1
             new_state.currentMap[curCarX+1][curCarY] = carId
-            new_state.cars_[carId].location = (new_state.cars_[carId].location[0]+1, new_state.cars_[carId].location[1])    # Lai, change car position as well ?
+            new_state.cars_[carId].location = (new_state.cars_[carId].location[0]+1, new_state.cars_[carId].location[1])
         elif action is 'east':
             new_state.currentMap[curCarX][curCarY] = -1
             new_state.currentMap[curCarX][curCarY+1] = carId
-            new_state.cars_[carId].location = (new_state.cars_[carId].location[0], new_state.cars_[carId].location[1]+1)    # Lai, change car position as well ?
+            new_state.cars_[carId].location = (new_state.cars_[carId].location[0], new_state.cars_[carId].location[1]+1) 
         elif action is 'west':
             new_state.currentMap[curCarX][curCarY] = -1
             new_state.currentMap[curCarX][curCarY-1] = carId
-            new_state.cars_[carId].location = (new_state.cars_[carId].location[0], new_state.cars_[carId].location[1]-1)    # Lai, change car position as well ?
+            new_state.cars_[carId].location = (new_state.cars_[carId].location[0], new_state.cars_[carId].location[1]-1)
 
 
          #DO nothing, no route found!
