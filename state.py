@@ -49,8 +49,16 @@ class State(object):
     def _generateMap(self, width, height):
         curMap = np.zeros((width, height)) - 2
 
-        xs = np.random.randint(height / 2., size=5)
-        ys = np.random.randint(width / 2., size=5)
+        n_xs = int(height / 3)
+        n_ys = np.random.randint(3, width / 3)
+
+        xs = range(height / 3)
+        np.random.shuffle(xs)
+        xs = np.array(xs[:n_xs], dtype=int) * 3
+
+        ys = range(width / 3)
+        np.random.shuffle(ys)
+        ys = np.array(ys[:n_ys], dtype=int) * 3
 
         curMap[xs, :] = -1
         curMap[:, ys] = -1
