@@ -112,25 +112,21 @@ class State(object):
         curCarX = curCar.location[0]
         curCarY = curCar.location[1]
 
-        if action is 'north':
-            new_state.currentMap[curCarX][curCarY] = -1
-            new_state.currentMap[curCarX-1][curCarY] = carId
-            new_state.cars_[carId].location = (new_state.cars_[carId].location[0]-1, new_state.cars_[carId].location[1]) 
-        elif action is 'south':
-            new_state.currentMap[curCarX][curCarY] = -1
-            new_state.currentMap[curCarX+1][curCarY] = carId
-            new_state.cars_[carId].location = (new_state.cars_[carId].location[0]+1, new_state.cars_[carId].location[1])
-        elif action is 'east':
-            new_state.currentMap[curCarX][curCarY] = -1
-            new_state.currentMap[curCarX][curCarY+1] = carId
-            new_state.cars_[carId].location = (new_state.cars_[carId].location[0], new_state.cars_[carId].location[1]+1) 
-        elif action is 'west':
-            new_state.currentMap[curCarX][curCarY] = -1
-            new_state.currentMap[curCarX][curCarY-1] = carId
-            new_state.cars_[carId].location = (new_state.cars_[carId].location[0], new_state.cars_[carId].location[1]-1)
+        dirDiff = {
+            'north': [-1, 0],
+            'south': [1, 0],
+            'east': [0, 1],
+            'west': [0, -1],
+        }
 
+        xDiff = dirDiff[action][0]
+        yDiff = dirDiff[action][1]
 
-         #DO nothing, no route found!
+        new_state.currentMap[curCarX, curCarY] = -1
+        new_state.currentMap[curCarX + xDiff, curCarY + yDiff] = carId
+        new_state.cars_[carId].location = (
+            new_state.cars_[carId].location[0] + xDiff,
+            new_state.cars_[carId].location[1] + yDiff)
 
         return new_state
         #print 'getStateByAction(carId, action)'
