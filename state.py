@@ -39,7 +39,7 @@ class State(object):
     #  >=0 car
     ######################
 
-    def __init__(self, width=20, height=20):
+    def __init__(self, width=30, height=30):
         self.currentMap = None
         self.mapMaxX = height
         self.mapMaxY = width
@@ -183,20 +183,3 @@ class State(object):
             return False
 
 
-#Just my testing script down below
-#Simulating the supervisor
-if __name__ == '__main__':
-    n_cars = 2
-    a = State()
-    a.generateCars(n_cars)
-    a.printMap()
-
-    for carId, car in enumerate(a.getCars()):
-        print 'carid ', carId
-        actions = a.getSucc(carId)
-        for action in actions :
-            print 'step :' ,action
-            a.getStateByAction(carId,action).printMap()
-
-    #for c in a.getCars():
-    #    c.toString()

@@ -1,6 +1,7 @@
 import numpy as np
 import random
 import copy
+import sys
 from state import State
 from state import Car
 
@@ -148,7 +149,7 @@ class Supervisor:
 
 
 if __name__ == '__main__':
-    numberOfCars = 7
+    numberOfCars = 10
     mSupervisor = Supervisor(numberOfCars)
     mState = mSupervisor.state
     mAI = mSupervisor.ai
@@ -158,6 +159,13 @@ if __name__ == '__main__':
     mapsForDrawer = []
     while (not mSupervisor.isGoal()) and (counter < maxTurns):
         for car_i in range(numberOfCars):
+            #Progress bar
+            sys.stdout.write('\r')
+            i = int(round((20*(0.01+counter))/100))
+            sys.stdout.write("[%-20s] %d%%" % ('='*i, 5*i))
+            sys.stdout.flush()
+
+
 
             nextAction = mAI.getNextAction(car_i, mState)
             mState = mState.getStateByAction(car_i, nextAction)

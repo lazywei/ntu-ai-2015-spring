@@ -2,7 +2,7 @@ from Tkinter import *
 import numpy as np
 import time
 
-
+ 
 class Drawer:
     def __init__(self, arrays):
         arrays = np.array(arrays)
@@ -33,9 +33,9 @@ class Drawer:
         else:
             colors = ["blue", "green", "yellow", "pink", "orange",
                       "purple", "black", "gray"]
-            color = colors[id]
+            color = colors[id%len(colors)]
 
-        if id == 0 or id == 1:
+        if id >= 0:
             tk_id = self.w.create_rectangle(points[0], points[1], points[2], points[3],
                                             fill=color, outline="white")
             self.cars.append(Car(id, tk_id, self.car_router(id)))
@@ -53,7 +53,7 @@ class Drawer:
 
     def animation(self):
         for index in range(1, len(self.maps)):
-            for i in range(0, 51):
+            for i in range(0, 50):
                 for car in self.cars:
                     #time.sleep(0.025)
                     points = car.router[index]
@@ -123,3 +123,5 @@ if __name__ == "__main__":
     height = arrays[0].shape[0]
     dr_ = Drawer(arrays)
     dr_.graph()
+    
+
