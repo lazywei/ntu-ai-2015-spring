@@ -1,12 +1,14 @@
 import random
 from state import State
 from state import Car
+import math
 
 class AI:
     def getNextAction(self,carId, state):
         """if state.cars.search=="UCS":"""
         #action = self.randomWalk(carId,state)
-        action = self.BFS(carId,state)
+        #action = self.BFS(carId,state)
+        action = self.AStar(carId,state,self.hueristic_BFS)
 
         return action
 
@@ -19,7 +21,7 @@ class AI:
         else :
             return random.sample(state.getSucc(carId),1)[0]
 
-def BFS(self,carId,state):
+    def BFS(self,carId,state):
 
         import imp
 
@@ -80,14 +82,11 @@ def BFS(self,carId,state):
         else:
             return re[0]
 
-    def AStar(self,carId,state):
+    def AStar(self,carId,state,hueristic,ch=5,cc=3):
 
         import imp
 
         foo = imp.load_source('PriorityQueue', './AI_ref/util.py')
-
-        #from AI_ref/util import PriorityQueueWithFunction
-        #from AI_ref/util import PriorityQueue
 
         #import inspect
         #print inspect.getmembers(problem, predicate=inspect.ismethod)
@@ -99,7 +98,7 @@ def BFS(self,carId,state):
 
         #state = problem.getStartState()
         coord = state.getCarById(carId).location
-        st.push( (state,[]), 0 )
+        st.push( (state,[]), hueristic(carId,state)*ch + 0*cc )
         exp[coord] = 1
 
         #"""
@@ -128,7 +127,7 @@ def BFS(self,carId,state):
                     tmpMove = list(move)
                     tmpMove.append(it)
                     #st.push( (Nstate,tmpMove), state.getCostOfActions(tmpMove) )
-                    st.push( (Nstate,tmpMove), len(tmpMove) )
+                    st.push( (Nstate,tmpMove), hueristic(carId,Nstate)*ch + len(tmpMove)*cc )
                     exp[Ncoord] = 1
                     #print "add %r"%(Ncoord,)
                 elif exp[Ncoord]==1:
@@ -140,6 +139,25 @@ def BFS(self,carId,state):
             return 'none'
         else:
             return re[0]
+    
+    def hueristic_BFS(self,carId,state):
+        return 0
+    def hueristic_manDist(self,carId,state):
+        car = state.getCarById(carId)
+        x = car.location[0]
+        y = car.location[1]
+        dx = car.destination[0]
+        dy = car.destination[1]
+        dist = abs(dx-x)+abs(dy-y)
+        return dist
+    def hueristic_eucDist(self,carId,state):
+        car = state.getCarById(carId)
+        x = car.location[0]
+        y = car.location[1]
+        dx = car.destination[0]
+        dy = car.destination[1]
+        dist = math.sqrt( pow(dx-x,2)+pow(dy-y,2))
+        return dist
 
 
 """-----------------------------------------------------------------------------
@@ -166,6 +184,7 @@ emulate the supervisor
 if __name__ == '__main__':
     n_cars = 2
     a = State()
+    ai = AI()
 
     # ---------------------------------------------------------------------------
     # Lai, question1, how to generate cars ?
@@ -181,13 +200,14 @@ if __name__ == '__main__':
         a.currentMap[:,:] = -2
 
     # ---------------------------------------------------------------------------
-
+    
     a.generateCars(n_cars)
     a.printMap()
 
-    ai = AI()
 
     #TestIfGoal(a)
+    print "0 in now at : ",; print a.getCarById(0).location
+    
     action = ai.getNextAction(0, a)
     if action==[]:
         print "No route"
@@ -195,6 +215,13 @@ if __name__ == '__main__':
         print "Action: ",; print action
         print "0's turn, next state : ",; print a.getStateByAction(0,action).getCarById(0).location
     print "End of script"
+    
+    print a.getCarById(0).destination
+    print "man= ",
+    print ai.hueristic_manDist(0,a)
+    print "euc= ",
+    print ai.hueristic_eucDist(0,a)
+    exit()
 
 """
     for carId in range(len(a.getCars())):
