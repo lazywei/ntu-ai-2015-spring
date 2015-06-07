@@ -1,9 +1,10 @@
 import numpy as np
 import random
-
+import copy
 from state import State
 from state import Car
 
+import animation
 from AI import AI
 import os
 import time
@@ -147,23 +148,28 @@ class Supervisor:
 
 
 if __name__ == '__main__':
-    numberOfCars = 20
+    numberOfCars = 7
     mSupervisor = Supervisor(numberOfCars)
     mState = mSupervisor.state
     mAI = mSupervisor.ai
     counter = 0
     maxTurns = 2000
+    
+    mapsForDrawer = []
     while (not mSupervisor.isGoal()) and (counter < maxTurns):
         for car_i in range(numberOfCars):
 
             nextAction = mAI.getNextAction(car_i, mState)
             mState = mState.getStateByAction(car_i, nextAction)
             counter = counter + 1
-
+            mapsForDrawer.append(copy.deepcopy(mState.getMap().astype(int)))
+            '''
             os.system('clear')
             mState.printMap()
-            time.sleep(0.05)
-
+            time.sleep(0.01)
+            '''
+    drawer = animation.Drawer(mapsForDrawer)
+    drawer.graph()
 
 
 

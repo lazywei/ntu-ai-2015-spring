@@ -74,12 +74,11 @@ class AI:
                     pass
                 elif exp[Ncoord]==2:
                     pass
-        else:
-            #print "No route found"
-            #exit()
+             
+        if len( re ) ==0:
             return 'none'
-        #return re
-        return re[0]
+        else:
+            return re[0]
 
 """-----------------------------------------------------------------------------
 temporary function for AI.py testing
