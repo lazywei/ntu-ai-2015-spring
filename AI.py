@@ -1,32 +1,30 @@
-
-
 import random
 from state import State
 from state import Car
-
 
 class AI:
     def getNextAction(self,carId, state):
         """if state.cars.search=="UCS":"""
         #action = self.randomWalk(carId,state)
         action = self.BFS(carId,state)
-        
 
         return action
+
     def __init__(self):
         pass
+
     def randomWalk(self,carId,state):
         if len( state.getSucc(carId) ) ==0:
-            return ['none']
+            return 'none'
         else :
-            return random.sample(state.getSucc(carId),1)[0]    
-    
+            return random.sample(state.getSucc(carId),1)[0]
+
     def BFS(self,carId,state):
 
         import imp
-        
+
         foo = imp.load_source('PriorityQueue', './AI_ref/util.py')
-        
+
         #from AI_ref/util import PriorityQueueWithFunction
         #from AI_ref/util import PriorityQueue
 
@@ -47,14 +45,14 @@ class AI:
         #print "start point : ",; print coord
         #print "dest point : ",; print state.getCarById(carId).destination
         #"""
-        
+
         while st.isEmpty()==False:
             tmp = st.pop()
             state = tmp[0]
             move = tmp[1]
             coord = state.getCarById(carId).location
             #print coord
-            
+
             exp[coord] = 2
 
             if state.isGoalState(carId)==True:
@@ -79,7 +77,7 @@ class AI:
         else:
             #print "No route found"
             #exit()
-            return ['none']
+            return 'none'
         #return re
         return re[0]
 
@@ -107,13 +105,13 @@ emulate the supervisor
 if __name__ == '__main__':
     n_cars = 2
     a = State()
-    
+
     # ---------------------------------------------------------------------------
     # Lai, question1, how to generate cars ?
 
     choice = 3
 
-    if choice==1:    
+    if choice==1:
     # choice 1, 1 block left, still could generate car
         a.currentMap[:,:] = -2
         a.currentMap[1,1] = -1
@@ -136,7 +134,7 @@ if __name__ == '__main__':
         print "Action: ",; print action
         print "0's turn, next state : ",; print a.getStateByAction(0,action).getCarById(0).location
     print "End of script"
-    
+
 """
     for carId in range(len(a.getCars())):
         print 'carid ', carId

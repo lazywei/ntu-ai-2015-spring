@@ -22,7 +22,7 @@ class Supervisor:
         self.state.generateCars(_numberOfCars)
         self.map = self.state.getMap()
         self.cars = self.state.getCars()
-        
+
 
         # AI
         self.ai = AI()
@@ -31,7 +31,7 @@ class Supervisor:
         self.carMovesRemain = []
         for carID in range(numberOfCars):
             self.carMovesRemain.append(self.cars[carID].speed)
-            
+
 
         # carList : a 'list' of 'car'
         # car :
@@ -45,12 +45,12 @@ class Supervisor:
         #    car.getNextLocation(gameState) : return next location of the car
 
     def start(self):
-        
+
         # for car in cars:
         #     nextAction = AI.nextStep(car.id, state)
         #     state = state.getStateByAction(car.id, nextAction)
         #     Drawer.draw(state)
-        
+
 
         # Start
         currCarIdx = 0
@@ -66,7 +66,7 @@ class Supervisor:
 
 
     def isGoal(self):
-        goal_counter = 0        
+        goal_counter = 0
         for carID in range(self.numberOfCars):
             if(self.state.isGoalState(carID)):
                 goal_counter = goal_counter+1
@@ -106,7 +106,7 @@ class Supervisor:
         else:
             print 'In showCarsInfo(): There is no any car!'
 
-    
+
 
     #################################################################
     # Deprecated                                                    #
@@ -153,15 +153,15 @@ if __name__ == '__main__':
     mAI = mSupervisor.ai
     counter = 0
     maxTurns = 2000
-    while (not mSupervisor.isGoal())  and   (counter < maxTurns):
+    while (not mSupervisor.isGoal()) and (counter < maxTurns):
         for car_i in range(numberOfCars):
 
             nextAction = mAI.getNextAction(car_i, mState)
             mState = mState.getStateByAction(car_i, nextAction)
-            counter = counter + 1 
-        
+            counter = counter + 1
+
             os.system('clear')
-            mState.printMap()             
+            mState.printMap()
             time.sleep(0.05)
 
 
