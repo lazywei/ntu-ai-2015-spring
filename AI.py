@@ -19,7 +19,7 @@ class AI:
         else :
             return random.sample(state.getSucc(carId),1)[0]
 
-    def BFS(self,carId,state):
+def BFS(self,carId,state):
 
         import imp
 
@@ -79,6 +79,68 @@ class AI:
             return 'none'
         else:
             return re[0]
+
+    def AStar(self,carId,state):
+
+        import imp
+
+        foo = imp.load_source('PriorityQueue', './AI_ref/util.py')
+
+        #from AI_ref/util import PriorityQueueWithFunction
+        #from AI_ref/util import PriorityQueue
+
+        #import inspect
+        #print inspect.getmembers(problem, predicate=inspect.ismethod)
+        exp = {}
+        # exp=1...added to queue, 2...poped from queue
+        st = foo.PriorityQueue()
+        re = []
+
+
+        #state = problem.getStartState()
+        coord = state.getCarById(carId).location
+        st.push( (state,[]), 0 )
+        exp[coord] = 1
+
+        #"""
+        #print "start point : ",; print coord
+        #print "dest point : ",; print state.getCarById(carId).destination
+        #"""
+
+        while st.isEmpty()==False:
+            tmp = st.pop()
+            state = tmp[0]
+            move = tmp[1]
+            coord = state.getCarById(carId).location
+            #print coord
+
+            exp[coord] = 2
+
+            if state.isGoalState(carId)==True:
+                re = move
+                break
+
+            adj = state.getSucc(carId)
+            for it in adj:
+                Nstate = state.getStateByAction(carId, it)
+                Ncoord = Nstate.getCarById(carId).location
+                if ( Ncoord in exp ) == False:
+                    tmpMove = list(move)
+                    tmpMove.append(it)
+                    #st.push( (Nstate,tmpMove), state.getCostOfActions(tmpMove) )
+                    st.push( (Nstate,tmpMove), len(tmpMove) )
+                    exp[Ncoord] = 1
+                    #print "add %r"%(Ncoord,)
+                elif exp[Ncoord]==1:
+                    pass
+                elif exp[Ncoord]==2:
+                    pass
+             
+        if len( re ) ==0:
+            return 'none'
+        else:
+            return re[0]
+
 
 """-----------------------------------------------------------------------------
 temporary function for AI.py testing
