@@ -154,14 +154,14 @@ if __name__ == '__main__':
     mState = mSupervisor.state
     mAI = mSupervisor.ai
     counter = 0
-    maxTurns = 2000
+    maxTurns = numberOfCars*50
     
     mapsForDrawer = []
     while (not mSupervisor.isGoal()) and (counter < maxTurns):
         for car_i in range(numberOfCars):
             #Progress bar
             sys.stdout.write('\r')
-            i = int(round((20*(0.01+counter))/100))
+            i = int(round((20*(0.01+counter))/maxTurns))
             sys.stdout.write("[%-20s] %d%%" % ('='*i, 5*i))
             sys.stdout.flush()
 

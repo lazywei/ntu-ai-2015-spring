@@ -2,7 +2,8 @@ from Tkinter import *
 import numpy as np
 import time
 
- 
+blockWidth = 30
+
 class Drawer:
     def __init__(self, arrays):
         arrays = np.array(arrays)
@@ -11,7 +12,7 @@ class Drawer:
 
         self.master = Tk()
 
-        self.w = Canvas(self.master, width=height*30, height=weight*30)
+        self.w = Canvas(self.master, width=height*blockWidth, height=weight*blockWidth)
         self.w.pack()
         self.maps = arrays
         self.points = index2point(weight, height)
@@ -48,12 +49,13 @@ class Drawer:
         router = []
         for map_ in self.maps:
             x, y = np.nonzero(id == map_)
+            #print x[0],y[0]
             router.append([x[0], y[0]])
         return router
 
     def animation(self):
         for index in range(1, len(self.maps)):
-            for i in range(0, 50):
+            for i in range(0, int(round(blockWidth/0.6))):
                 for car in self.cars:
                     #time.sleep(0.025)
                     points = car.router[index]
@@ -79,9 +81,9 @@ def index2point(x, y):
     for index_y in range(0, y):
         row = []
         for index_x in range(0, x):
-            point_x = index_x*30
-            point_y = index_y*30
-            point = (point_y, point_x, point_y+30, point_x+30)
+            point_x = index_x*blockWidth
+            point_y = index_y*blockWidth
+            point = (point_y, point_x, point_y+blockWidth, point_x+blockWidth)
             row.append(point)
         matrix.append(row)
     return np.array(matrix)
