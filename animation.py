@@ -2,8 +2,8 @@ from Tkinter import *
 import numpy as np
 import time
 
-blockWidth = 30
-
+blockWidth = 24 #Please enter the number that can be divided by 0.6
+delayTime = 0.0002
 class Drawer:
     def __init__(self, arrays):
         arrays = np.array(arrays)
@@ -57,7 +57,7 @@ class Drawer:
         for index in range(1, len(self.maps)):
             for i in range(0, int(round(blockWidth/0.6))):
                 for car in self.cars:
-                    #time.sleep(0.025)
+                    time.sleep(delayTime)
                     points = car.router[index]
                     p_points = car.router[index-1]
                     x_offset = points[0] - p_points[0]

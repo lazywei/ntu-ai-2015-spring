@@ -39,7 +39,7 @@ class State(object):
     #  >=0 car
     ######################
 
-    def __init__(self, width=20, height=20):
+    def __init__(self, width=40, height=40):
         self.currentMap = None
         self.mapMaxX = height
         self.mapMaxY = width

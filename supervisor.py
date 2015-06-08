@@ -149,7 +149,7 @@ class Supervisor:
 
 
 if __name__ == '__main__':
-    numberOfCars = 10
+    numberOfCars = 20
     mSupervisor = Supervisor(numberOfCars)
     mState = mSupervisor.state
     mAI = mSupervisor.ai
@@ -170,12 +170,13 @@ if __name__ == '__main__':
             nextAction = mAI.getNextAction(car_i, mState)
             mState = mState.getStateByAction(car_i, nextAction)
             counter = counter + 1
-            mapsForDrawer.append(copy.deepcopy(mState.getMap().astype(int)))
+            
             '''
             os.system('clear')
             mState.printMap()
             time.sleep(0.01)
             '''
+        mapsForDrawer.append(copy.deepcopy(mState.getMap().astype(int)))
     drawer = animation.Drawer(mapsForDrawer)
     drawer.graph()
 
