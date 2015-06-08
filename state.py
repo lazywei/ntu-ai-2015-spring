@@ -147,7 +147,7 @@ class State(object):
 
                 dx = random.choice(np.arange(self.mapMaxX))
                 dy = random.choice(np.arange(self.mapMaxY))
-                if self.currentMap[sx][sy] and self.currentMap[dx][dy]  == -1:
+                if self.currentMap[sx][sy] == -1 and self.currentMap[dx][dy]  == -1:
                     break
 
             newCar = Car(  i,'vehicle',(sx,sy)  ,  (sx,sy)   ,  (dx,dy)  , 0 , 1)
