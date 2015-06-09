@@ -1,8 +1,9 @@
 # Animation
 
 Using redis to save our maps
+
 1. pip install redis
-2. redis-sever
+2. redis-server
 
 ```
 from animation.interactive import *
