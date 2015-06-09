@@ -9,30 +9,21 @@ blockWidth = 30
 
 
 class RedisQueue(object):
-    """Simple Queue with Redis Backend"""
     def __init__(self, name, namespace='queue', **redis_kwargs):
         self.__db = redis.Redis(**redis_kwargs)
         self.key = '%s:%s' % (namespace, name)
 
     def qsize(self):
-        """Return the approximate size of the queue."""
         return self.__db.llen(self.key)
 
     def empty(self):
-        """Return True if the queue is empty, False otherwise."""
         return self.qsize() == 0
 
     def put(self, items):
-        """Put item into the queue."""
-
         items = map(lambda item: pickle.dumps(item), items)
         self.__db.rpush(self.key, *items)
 
     def get(self, block=True, timeout=None):
-        """Remove and return an item from the queue.
-
-        If optional args block is true and timeout is None (the default), block
-        if necessary until an item is available."""
         if block:
             item = self.__db.blpop(self.key, timeout=timeout)
         else:
@@ -46,13 +37,12 @@ class RedisQueue(object):
 class Drawer:
     def __init__(self, r):
         map_ = np.array(r.get())
-        print map_
+        weight = map_.shape[1]
+        height = map_.shape[0]
         self.start = map_
         self.maps = r
 
-        weight = map_.shape[1]
-        height = map_.shape[0]
-
+        # tinker
         self.master = Tk()
         self.w = Canvas(self.master,
                         width=height*blockWidth,
@@ -71,7 +61,6 @@ class Drawer:
                 self.graphunit(map_[h][w], self.points[h][w], map_)
 
         self.master.after(0, self.animation())
-        self.master.mainloop()
 
     def graphunit(self, id, points, map_):
         if id == -2:
@@ -99,7 +88,6 @@ class Drawer:
             map_ = self.maps.get()
             for i in range(0, int(round(blockWidth/0.6))):
                 for car in self.cars:
-                    time.sleep(0.25)
                     points = self.car_state(car.id, map_)
                     x_offset = points[0] - car.state[0]
                     y_offset = points[1] - car.state[1]
@@ -110,6 +98,12 @@ class Drawer:
                     self.w.update()
             for car in self.cars:
                 car.state = self.car_state(car.id, map_)
+        while self.maps.empty():
+            time.sleep(5)
+            if self.maps.empty():
+                self.master.mainloop()
+                exit()
+            self.animation()
 
 class Car:
     def __init__(self, id, tk_id, state):
@@ -129,28 +123,3 @@ def index2point(x, y):
             row.append(point)
         matrix.append(row)
     return np.array(matrix)
-
-if __name__ == "__main__":
-    # test
-    array = [[-2, -2, -2, -2, -2, -2, -2],
-             [-2, -1, -1, -1, -1, -1, -2],
-             [-2, 1, -1, -1, -1, -1, -2],
-             [-2, -1, -1, -1, -1, -1, -2],
-             [-2, -1, -1, -1, -1, 0, -2],
-             [-2, -2, -2, -2, -2, -2, -2]]
-    array_2 = [[-2, -2, -2, -2, -2, -2, -2],
-               [-2, -1, -1, -1, -1, -1, -2],
-               [-2, -1, 1, -1, -1, -1, -2],
-               [-2, -1, -1, -1, -1, -1, -2],
-               [-2, -1, -1, -1, 0, -1, -2],
-               [-2, -2, -2, -2, -2, -2, -2]]
-    array_3 = [[-2, -2, -2, -2, -2, -2, -2],
-               [-2, -1, -1, -1, -1, -1, -2],
-               [-2, -1, -1, -1, -1, -1, -2],
-               [-2, -1, 1, -1, -1, -1, -2],
-               [-2, -1, -1, 0, -1, -1, -2],
-               [-2, -2, -2, -2, -2, -2, -2]]
-
-    r = RedisQueue('key')
-    r.put([array, array_2])
-    dr_ = Drawer(r)
