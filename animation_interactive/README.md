@@ -6,7 +6,7 @@ Using redis to save our maps
 2. redis-server
 
 ```
-from animation.interactive import *
+from animation_interactive.interactive import *
 
 # init
 r = RedisQueue('key')
