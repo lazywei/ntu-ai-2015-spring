@@ -5,7 +5,7 @@ import sys
 from state import State
 from state import Car
 
-import animation
+from animation_interactive.interactive import RedisQueue
 from AI import AI
 import os
 import time
@@ -20,7 +20,7 @@ class Supervisor:
     def __init__(self, _numberOfCars):
         self.numberOfCars = _numberOfCars
 
-        self.state = State()
+        self.state = State(30, 30)
         self.state.generateCars(_numberOfCars)
         self.map = self.state.getMap()
         self.cars = self.state.getCars()
@@ -147,7 +147,6 @@ class Supervisor:
     #         'In generateCars(): Wrong argument: numberOfCars <-', numberOfCars
 
 
-
 if __name__ == '__main__':
     numberOfCars = 20
     mSupervisor = Supervisor(numberOfCars)
@@ -155,35 +154,30 @@ if __name__ == '__main__':
     mAI = mSupervisor.ai
     counter = 0
     maxTurns = numberOfCars*50
-    
+
     mapsForDrawer = []
+
+    r = RedisQueue('key')
+    r.flushall()
+
     while (not mSupervisor.isGoal()) and (counter < maxTurns):
         for car_i in range(numberOfCars):
-            #Progress bar
+            # Progress bar
             sys.stdout.write('\r')
             i = int(round((20*(0.01+counter))/maxTurns))
             sys.stdout.write("[%-20s] %d%%" % ('='*i, 5*i))
             sys.stdout.flush()
 
-
-
             nextAction = mAI.getNextAction(car_i, mState)
             mState = mState.getStateByAction(car_i, nextAction)
             counter = counter + 1
-            
+
             '''
             os.system('clear')
             mState.printMap()
             time.sleep(0.01)
             '''
+
         mapsForDrawer.append(copy.deepcopy(mState.getMap().astype(int)))
-    drawer = animation.Drawer(mapsForDrawer)
-    drawer.graph()
-
-
-
-
-
-
-
-
+        r.put(mapsForDrawer)
+        mapsForDrawer = []

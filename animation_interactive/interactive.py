@@ -6,12 +6,15 @@ import redis
 
 
 blockWidth = 30
-
+offset_size = 2
 
 class RedisQueue(object):
     def __init__(self, name, namespace='queue', **redis_kwargs):
         self.__db = redis.Redis(**redis_kwargs)
         self.key = '%s:%s' % (namespace, name)
+
+    def flushall(self):
+        self.__db.flushall()
 
     def qsize(self):
         return self.__db.llen(self.key)
@@ -86,23 +89,26 @@ class Drawer:
     def animation(self):
         while not self.maps.empty():
             map_ = self.maps.get()
-            for i in range(0, int(round(blockWidth/0.6))):
+            for i in range(0, int(round(blockWidth/offset_size))):
                 for car in self.cars:
                     points = self.car_state(car.id, map_)
-                    x_offset = points[0] - car.state[0]
-                    y_offset = points[1] - car.state[1]
-                    if x_offset == 0 and y_offset != 0:
-                        self.w.move(car.tk_id, 0, 0.6*y_offset)
-                    elif x_offset != 0 and y_offset == 0:
-                        self.w.move(car.tk_id, 0.6*x_offset, 0)
-                    self.w.update()
+                    if points != car.state:
+                        x_offset = points[0] - car.state[0]
+                        y_offset = points[1] - car.state[1]
+                        if x_offset == 0 and y_offset != 0:
+                            self.w.move(car.tk_id, 0, offset_size*y_offset)
+                        elif x_offset != 0 and y_offset == 0:
+                            self.w.move(car.tk_id, offset_size*x_offset, 0)
+                        self.w.update()
+            print ('Finish 1 map')
             for car in self.cars:
                 car.state = self.car_state(car.id, map_)
         while self.maps.empty():
-            time.sleep(5)
-            if self.maps.empty():
-                self.master.mainloop()
-                exit()
+            time.sleep(10)
+            #   if self.maps.empty():
+            #       # If there is no new map after 60 second, the animation will stop
+            #       self.master.mainloop()
+            #       exit()
             self.animation()
 
 class Car:
@@ -123,3 +129,10 @@ def index2point(x, y):
             row.append(point)
         matrix.append(row)
     return np.array(matrix)
+
+if __name__ == "__main__":
+    r = RedisQueue('key')
+    while True:
+        if r.qsize() >= 2:
+            print ('start!')
+            Drawer(r)
