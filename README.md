@@ -1,6 +1,16 @@
 # ntu-ai-2015-spring
 NTU Introduction to AI 2015 spring Final Project
 
+## Requirement
+
+1. install [redis] (http://redis.io/topics/quickstart)
+2. install python redis `pip install redis`
+
+## Usage
+
+1. redis-server
+2. python supervisor.py
+3. python animation_interactive/interactive.py
 
 ## Reference
 We haven't refer any lib or rep, yet.
