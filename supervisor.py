@@ -66,12 +66,22 @@ class Supervisor:
             state = state.getStateByAction(currCarIdx, nextAction)
             Drawer.draw(state)
 
-
-    def isGoal(self):
+    def printArrivedRatio(self,_mState):
         goal_counter = 0
         for carID in range(self.numberOfCars):
-            if(self.state.isGoalState(carID)):
+            if(_mState.isGoalState(carID)):
                 goal_counter = goal_counter+1
+        
+        print 'Arrived Ratio : ',goal_counter , ' / ', self.numberOfCars
+
+
+    def isGoal(self,_mState):
+        goal_counter = 0
+        for carID in range(self.numberOfCars):
+            if(_mState.isGoalState(carID)):
+                goal_counter = goal_counter+1
+        
+        #print goal_counter
         if  goal_counter == self.numberOfCars:
             return True
         else:
@@ -148,36 +158,35 @@ class Supervisor:
 
 
 if __name__ == '__main__':
-    numberOfCars = 10
+    numberOfCars = 5
     mSupervisor = Supervisor(numberOfCars,20,20)
     mState = mSupervisor.state
     mAI = mSupervisor.ai
     counter = 0
-    maxTurns = numberOfCars*50
+    maxTurns = numberOfCars*30
 
     mapsForDrawer = []
 
     r = RedisQueue('key')
     r.flushall()
 
-    while (not mSupervisor.isGoal()) and (counter < maxTurns):
+    while (not mSupervisor.isGoal(mState)) and (counter < maxTurns):
         for car_i in range(numberOfCars):
             # Progress bar
+            
             sys.stdout.write('\r')
             i = int(round((20*(0.01+counter))/maxTurns))
             sys.stdout.write("[%-20s] %d%%" % ('='*i, 5*i))
             sys.stdout.flush()
-
+            
             nextAction = mAI.getNextAction(car_i, mState)
             mState = mState.getStateByAction(car_i, nextAction)
             counter = counter + 1
 
-            '''
-            os.system('clear')
-            mState.printMap()
-            time.sleep(0.01)
-            '''
 
-        mapsForDrawer.append(copy.deepcopy(mState.getMap().astype(int)))
+        mapsForDrawer.append(mState.getMap().astype(int))
+        #mapsForDrawer.append(copy.deepcopy(mState.getMap().astype(int)))
         r.put(mapsForDrawer)
         mapsForDrawer = []
+    print '\n',
+    mSupervisor.printArrivedRatio(mState)

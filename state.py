@@ -107,6 +107,8 @@ class State(object):
 
     def getStateByAction(self, carId, action):
         new_state = copy.deepcopy(self)
+        #new_state = self
+
 
         curCar = self.cars_[carId]
         curCarX = curCar.location[0]
@@ -171,12 +173,12 @@ class State(object):
    # Temporary function, help add for AI.py ??                     #
    #################################################################
     def isGoalState(self,carId):
-        """
-        print "inside isGoalState"
-        print "carId = "; print carId
-        print self.getCarById(carId).location
-        print self.getCarById(carId).destination
-        """
+        
+        #print "inside isGoalState"
+        #print "carId = "; print carId
+        #print self.getCarById(carId).location
+        #print self.getCarById(carId).destination
+
         if self.getCarById(carId).location == self.getCarById(carId).destination:
             return True
         else:
