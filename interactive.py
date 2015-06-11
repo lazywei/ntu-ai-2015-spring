@@ -3,10 +3,11 @@ import pickle
 import numpy as np
 import time
 import redis
-
+import sys
 
 blockWidth = 30
 offset_size = 2
+delayTime = 0.001
 
 class RedisQueue(object):
     def __init__(self, name, namespace='queue', **redis_kwargs):
@@ -38,7 +39,9 @@ class RedisQueue(object):
 
 
 class Drawer:
+
     def __init__(self, r):
+
         map_ = np.array(r.get())
         weight = map_.shape[1]
         height = map_.shape[0]
@@ -86,30 +89,40 @@ class Drawer:
         x, y = np.nonzero(id == map_)
         return [x[0], y[0]]
 
+
     def animation(self):
-        while not self.maps.empty():
-            map_ = self.maps.get()
-            for i in range(0, int(round(blockWidth/offset_size))):
+        totalDrawnMaps=0
+        while True:
+            if not self.maps.empty():
+                map_ = self.maps.get()
+                for i in range(0, int(round(blockWidth/offset_size))):
+                    for car in self.cars:
+                        time.sleep(delayTime)
+                        points = self.car_state(car.id, map_)
+                        if points != car.state:
+                            x_offset = points[0] - car.state[0]
+                            y_offset = points[1] - car.state[1]
+                            if x_offset == 0 and y_offset != 0:
+                                self.w.move(car.tk_id, 0, offset_size*y_offset)
+                            elif x_offset != 0 and y_offset == 0:
+                                self.w.move(car.tk_id, offset_size*x_offset, 0)
+                            self.w.update()
+                
+                
+                sys.stdout.write('\r')
+                sys.stdout.write("The drawers has drawn %d maps." %totalDrawnMaps)
+                sys.stdout.flush()
+                totalDrawnMaps+=1
+                
                 for car in self.cars:
-                    points = self.car_state(car.id, map_)
-                    if points != car.state:
-                        x_offset = points[0] - car.state[0]
-                        y_offset = points[1] - car.state[1]
-                        if x_offset == 0 and y_offset != 0:
-                            self.w.move(car.tk_id, 0, offset_size*y_offset)
-                        elif x_offset != 0 and y_offset == 0:
-                            self.w.move(car.tk_id, offset_size*x_offset, 0)
-                        self.w.update()
-            print ('Finish 1 map')
-            for car in self.cars:
-                car.state = self.car_state(car.id, map_)
-        while self.maps.empty():
-            time.sleep(10)
-            #   if self.maps.empty():
-            #       # If there is no new map after 60 second, the animation will stop
-            #       self.master.mainloop()
-            #       exit()
-            self.animation()
+                    car.state = self.car_state(car.id, map_)
+            else:
+                time.sleep(1)
+                #   if self.maps.empty():
+                #       # If there is no new map after 60 second, the animation will stop
+                #       self.master.mainloop()
+                #       exit()
+                
 
 class Car:
     def __init__(self, id, tk_id, state):

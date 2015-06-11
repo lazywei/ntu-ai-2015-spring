@@ -5,7 +5,7 @@ import sys
 from state import State
 from state import Car
 
-from animation_interactive.interactive import RedisQueue
+from interactive import RedisQueue
 from AI import AI
 import os
 import time
@@ -17,10 +17,10 @@ class Supervisor:
     # _map includes
     #    method for moving a car( e.g., map.moveCar(car, from, to) )
     # _cars includes the cars and it type, priority and speed
-    def __init__(self, _numberOfCars):
+    def __init__(self, _numberOfCars,_mapWidth,_mapHeight):
         self.numberOfCars = _numberOfCars
 
-        self.state = State(30, 30)
+        self.state = State(_mapWidth, _mapHeight)
         self.state.generateCars(_numberOfCars)
         self.map = self.state.getMap()
         self.cars = self.state.getCars()
@@ -148,8 +148,8 @@ class Supervisor:
 
 
 if __name__ == '__main__':
-    numberOfCars = 20
-    mSupervisor = Supervisor(numberOfCars)
+    numberOfCars = 10
+    mSupervisor = Supervisor(numberOfCars,20,20)
     mState = mSupervisor.state
     mAI = mSupervisor.ai
     counter = 0
