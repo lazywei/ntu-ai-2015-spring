@@ -2,13 +2,13 @@ import random
 from state import State
 from state import Car
 import math
-
+import imp
 class AI:
     def getNextAction(self,carId, state):
         """if state.cars.search=="UCS":"""
         #action = self.randomWalk(carId,state)
         #action = self.BFS(carId,state)
-        action = self.AStar(carId,state,self.hueristic_BFS)
+        action = self.AStar(carId,state,self.hueristic_manDist)
 
         return action
 
@@ -23,7 +23,7 @@ class AI:
 
     def BFS(self,carId,state):
 
-        import imp
+
 
         foo = imp.load_source('PriorityQueue', './AI_ref/util.py')
 
@@ -84,7 +84,7 @@ class AI:
 
     def AStar(self,carId,state,hueristic,ch=5,cc=3):
 
-        import imp
+
 
         foo = imp.load_source('PriorityQueue', './AI_ref/util.py')
 
