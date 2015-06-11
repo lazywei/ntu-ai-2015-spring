@@ -4,11 +4,15 @@ from state import Car
 import math
 import imp
 class AI:
+    KGreedyQueue= imp.load_source('Queue', './AI_ref/util.py').Queue()
+    KGreedyRegretQueue = imp.load_source('Queue', './AI_ref/util.py').Queue()
+    K =5
     def getNextAction(self,carId, state):
         """if state.cars.search=="UCS":"""
         #action = self.randomWalk(carId,state)
         #action = self.BFS(carId,state)
-        action = self.AStar(carId,state,self.hueristic_manDist)
+        #action = self.AStar(carId,state,self.hueristic_manDist)
+        action = self.KGreedyAStar(carId,state,self.hueristic_manDist)
 
         return action
 
@@ -81,7 +85,94 @@ class AI:
             return 'none'
         else:
             return re[0]
+    def KGreedyAStar(self,carId,state,hueristic,ch=5,cc=3):
 
+        foo = imp.load_source('PriorityQueue', './AI_ref/util.py')
+
+        #import inspect
+        #print inspect.getmembers(problem, predicate=inspect.ismethod)
+        exp = {}
+        # exp=1...added to queue, 2...poped from queue
+        st = foo.PriorityQueue()
+        
+        re = []
+
+
+        #state = problem.getStartState()
+        coord = state.getCarById(carId).location
+        st.push( (state,[]), hueristic(carId,state)*ch + 0*cc )
+        exp[coord] = 1
+
+        #"""
+        #print "start   point : ",; print state.getCarById(carId).start
+        #print "current point : ",; print coord
+        #print "dest    point : ",; print state.getCarById(carId).destination
+        #print '-----'
+        #"""
+
+        #if (self.KGreedyQueue.isEmpty()==True and self.KGreedyRegretQueue.isEmpty()==True):
+        if (self.KGreedyQueue.isEmpty()==True ):
+
+            while st.isEmpty()==False:
+                tmp = st.pop()
+                state = tmp[0]
+                move = tmp[1]
+                coord = state.getCarById(carId).location
+                #print coord
+
+                exp[coord] = 2
+
+                if state.isGoalState(carId)==True:
+                    re = move
+                    break
+
+                adj = state.getSucc(carId)
+                for it in adj:
+                    Nstate = state.getStateByAction(carId, it)
+                    Ncoord = Nstate.getCarById(carId).location
+                    if ( Ncoord in exp ) == False:
+                        tmpMove = list(move)
+                        tmpMove.append(it)
+                        #st.push( (Nstate,tmpMove), state.getCostOfActions(tmpMove) )
+                        st.push( (Nstate,tmpMove), hueristic(carId,Nstate)*ch + len(tmpMove)*cc )
+                        exp[Ncoord] = 1
+                        #print "add %r"%(Ncoord,)
+                    elif exp[Ncoord]==1:
+                        pass
+                    elif exp[Ncoord]==2:
+                        pass
+            if len( re ) ==0:
+                return 'none'
+            else :
+                for i in range (min(self.K,len(re))):             
+                    if re[i] == 'north' : regretStep ='south'
+                    if re[i] == 'south' : regretStep ='north'
+                    if re[i] == 'west' : regretStep ='east'
+                    if re[i] == 'east' : regretStep ='west'
+                    self.KGreedyQueue.push(re[i]) 
+                    self.KGreedyRegretQueue.push (regretStep)
+                print 'Consideration : ',re
+                self.KGreedyQueue.pop() 
+                self.KGreedyRegretQueue.pop()
+                return re[0]
+            
+        else:
+            print 'Greedy  kstep : ',self.KGreedyQueue.list[::-1]
+            print 'Greedy RGstep : ',self.KGreedyRegretQueue.list[::-1]
+            greedyStep = self.KGreedyQueue.pop()
+            regretStep = self.KGreedyRegretQueue.pop() 
+            
+            if(greedyStep in state.getSucc(carId)):
+                return greedyStep
+            #elif(regretStep in state.getSucc(carId)):
+            #    return regretStep 
+            else:
+                self.KGreedyQueue= imp.load_source('Queue', './AI_ref/util.py').Queue()
+                self.KGreedyRegretQueue = imp.load_source('Stack', './AI_ref/util.py').Queue()
+                return self.KGreedyAStar(carId,state,hueristic,ch,cc)
+                
+                
+                
     def AStar(self,carId,state,hueristic,ch=5,cc=3):
 
 

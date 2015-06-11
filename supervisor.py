@@ -157,35 +157,44 @@ class Supervisor:
     #         'In generateCars(): Wrong argument: numberOfCars <-', numberOfCars
 
 
+
+
+
 if __name__ == '__main__':
-    numberOfCars = 5
-    mSupervisor = Supervisor(numberOfCars,20,20)
+    numberOfCars = 2
+    mSupervisor = Supervisor(numberOfCars,18,18)
     mState = mSupervisor.state
     mAI = mSupervisor.ai
     counter = 0
-    maxTurns = numberOfCars*30
-
+    maxTurns = numberOfCars*50
     mapsForDrawer = []
 
     r = RedisQueue('key')
     r.flushall()
 
     while (not mSupervisor.isGoal(mState)) and (counter < maxTurns):
+        mState.printMap()
         for car_i in range(numberOfCars):
             # Progress bar
             
+            '''
             sys.stdout.write('\r')
             i = int(round((20*(0.01+counter))/maxTurns))
             sys.stdout.write("[%-20s] %d%%" % ('='*i, 5*i))
             sys.stdout.flush()
-            
+            '''
             nextAction = mAI.getNextAction(car_i, mState)
             mState = mState.getStateByAction(car_i, nextAction)
             counter = counter + 1
+            
 
-
-        mapsForDrawer.append(mState.getMap().astype(int))
-        #mapsForDrawer.append(copy.deepcopy(mState.getMap().astype(int)))
+    
+        
+        print '***************************************************************'
+        time.sleep(0.2)
+        
+        
+        mapsForDrawer.append(copy.deepcopy(mState.getMap().astype(int)))
         r.put(mapsForDrawer)
         mapsForDrawer = []
     print '\n',
