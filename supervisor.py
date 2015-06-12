@@ -161,8 +161,8 @@ class Supervisor:
 
 
 if __name__ == '__main__':
-    numberOfCars = 30
-    mSupervisor = Supervisor(numberOfCars,70,70)
+    numberOfCars = 20
+    mSupervisor = Supervisor(numberOfCars,30,30)
     mState = mSupervisor.state
     mAI = mSupervisor.ai
     counter = 0
@@ -171,9 +171,8 @@ if __name__ == '__main__':
 
     r = RedisQueue('key')
     r.flushall()
-
+    
     while (not mSupervisor.isGoal(mState)) and (counter < maxTurns):
-        #mState.printMap()
         for car_i in range(numberOfCars):
             # Progress bar
             
@@ -190,9 +189,9 @@ if __name__ == '__main__':
 
     
         
-        #print '***************************************************************'
+        print '\n***************************************************************'
         #time.sleep(0.2)
-        
+        mState.printMap()    
         
         mapsForDrawer.append(copy.deepcopy(mState.getMap().astype(int)))
         r.put(mapsForDrawer)
