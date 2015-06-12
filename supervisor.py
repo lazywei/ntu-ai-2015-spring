@@ -173,14 +173,12 @@ if __name__ == '__main__':
     maxTurns = numberOfCars*140
     mapsForDrawer = []
 
-    #r = RedisQueue('key')
-    #r.flushall()
+    r = RedisQueue('key')
+    r.flushall()
     
     while (not mSupervisor_1.isGoal(mState)) and (counter < maxTurns):
         for car_i in range(numberOfCars):
             # Progress bar
-            
-            
             sys.stdout.write('\r')
             i = int(round((20*(0.01+counter))/maxTurns))
             sys.stdout.write("[%-20s] %d%%" % ('='*i, 5*i))
@@ -191,27 +189,25 @@ if __name__ == '__main__':
             counter = counter + 1
         #print '\n***************************************************************'
         #mState.printMap()    
-        #mapsForDrawer.append(copy.deepcopy(mState.getMap().astype(int)))
-        #r.put(mapsForDrawer)
-        #mapsForDrawer = []
+        mapsForDrawer.append(copy.deepcopy(mState.getMap().astype(int)))
+        r.put(mapsForDrawer)
+        mapsForDrawer = []
     #print '\n',
     mSupervisor_1.printArrivedRatio(mState)
 
-
+'''
     mState = mSupervisor_2.state
     mAI = mSupervisor_2.ai
     counter = 0
     maxTurns = numberOfCars*140
     mapsForDrawer = []
 
-    #r = RedisQueue('key')
-    #r.flushall()
+    r = RedisQueue('key')
+    r.flushall()
 
     while (not mSupervisor_2.isGoal(mState)) and (counter < maxTurns):
         for car_i in range(numberOfCars):
             # Progress bar
-
-
             sys.stdout.write('\r')
             i = int(round((20*(0.01+counter))/maxTurns))
             sys.stdout.write("[%-20s] %d%%" % ('='*i, 5*i))
@@ -222,8 +218,9 @@ if __name__ == '__main__':
             counter = counter + 1
         #print '\n***************************************************************'
         #mState.printMap()    
-        #mapsForDrawer.append(copy.deepcopy(mState.getMap().astype(int)))
-        #r.put(mapsForDrawer)
-        #mapsForDrawer = []
+        mapsForDrawer.append(copy.deepcopy(mState.getMap().astype(int)))
+        r.put(mapsForDrawer)
+        mapsForDrawer = []
     #print '\n',
     mSupervisor_2.printArrivedRatio(mState)
+'''
