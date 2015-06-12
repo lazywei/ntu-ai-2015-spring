@@ -5,7 +5,7 @@ import time
 import redis
 import sys
 
-blockWidth = 30
+blockWidth = 12
 offset_size = 2
 delayTime = 0.001
 

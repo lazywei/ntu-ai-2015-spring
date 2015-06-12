@@ -27,7 +27,7 @@ class Supervisor:
 
 
         # AI
-        self.ai = AI()
+        self.ai = AI(_numberOfCars)
 
         # Initializing the remain moves of cars
         self.carMovesRemain = []
@@ -161,28 +161,28 @@ class Supervisor:
 
 
 if __name__ == '__main__':
-    numberOfCars = 2
-    mSupervisor = Supervisor(numberOfCars,18,18)
+    numberOfCars = 30
+    mSupervisor = Supervisor(numberOfCars,70,70)
     mState = mSupervisor.state
     mAI = mSupervisor.ai
     counter = 0
-    maxTurns = numberOfCars*50
+    maxTurns = numberOfCars*140
     mapsForDrawer = []
 
     r = RedisQueue('key')
     r.flushall()
 
     while (not mSupervisor.isGoal(mState)) and (counter < maxTurns):
-        mState.printMap()
+        #mState.printMap()
         for car_i in range(numberOfCars):
             # Progress bar
             
-            '''
+            
             sys.stdout.write('\r')
             i = int(round((20*(0.01+counter))/maxTurns))
             sys.stdout.write("[%-20s] %d%%" % ('='*i, 5*i))
             sys.stdout.flush()
-            '''
+            
             nextAction = mAI.getNextAction(car_i, mState)
             mState = mState.getStateByAction(car_i, nextAction)
             counter = counter + 1
@@ -190,12 +190,12 @@ if __name__ == '__main__':
 
     
         
-        print '***************************************************************'
-        time.sleep(0.2)
+        #print '***************************************************************'
+        #time.sleep(0.2)
         
         
         mapsForDrawer.append(copy.deepcopy(mState.getMap().astype(int)))
         r.put(mapsForDrawer)
         mapsForDrawer = []
-    print '\n',
+    #print '\n',
     mSupervisor.printArrivedRatio(mState)

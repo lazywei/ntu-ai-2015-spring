@@ -49,8 +49,9 @@ class State(object):
     def _generateMap(self, width, height):
         curMap = np.zeros((width, height)) - 2
 
-        n_xs = int(height / 3)
-        n_ys = np.random.randint(3, width / 3)
+        roads_number = 8
+        n_xs = np.random.randint(roads_number, height / 3)
+        n_ys = np.random.randint(roads_number, width / 3)
 
         xs = range(height / 3)
         np.random.shuffle(xs)

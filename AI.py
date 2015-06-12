@@ -4,9 +4,9 @@ from state import Car
 import math
 import imp
 class AI:
-    KGreedyQueue= imp.load_source('Queue', './AI_ref/util.py').Queue()
-    KGreedyRegretQueue = imp.load_source('Queue', './AI_ref/util.py').Queue()
-    K =5
+    KGreedyArray = []
+
+    K =7
     def getNextAction(self,carId, state):
         """if state.cars.search=="UCS":"""
         #action = self.randomWalk(carId,state)
@@ -16,8 +16,12 @@ class AI:
 
         return action
 
-    def __init__(self):
-        pass
+    def __init__(self,_numberOfCars):
+        for i in range(_numberOfCars):
+            KGreedyQueue= imp.load_source('Queue', './AI_ref/util.py').Queue()
+            KGreedyRegretQueue = imp.load_source('Queue', './AI_ref/util.py').Queue()
+            self.KGreedyArray.append((KGreedyQueue,KGreedyRegretQueue))
+        
 
     def randomWalk(self,carId,state):
         if len( state.getSucc(carId) ) ==0:
@@ -111,7 +115,7 @@ class AI:
         #"""
 
         #if (self.KGreedyQueue.isEmpty()==True and self.KGreedyRegretQueue.isEmpty()==True):
-        if (self.KGreedyQueue.isEmpty()==True ):
+        if (self.KGreedyArray[carId][0].isEmpty()==True ):
 
             while st.isEmpty()==False:
                 tmp = st.pop()
@@ -149,26 +153,27 @@ class AI:
                     if re[i] == 'south' : regretStep ='north'
                     if re[i] == 'west' : regretStep ='east'
                     if re[i] == 'east' : regretStep ='west'
-                    self.KGreedyQueue.push(re[i]) 
-                    self.KGreedyRegretQueue.push (regretStep)
-                print 'Consideration : ',re
-                self.KGreedyQueue.pop() 
-                self.KGreedyRegretQueue.pop()
+                    self.KGreedyArray[carId][0].push(re[i]) 
+                    self.KGreedyArray[carId][1].push (regretStep)
+                #print carId,'\'s Consideration : ',re
+                self.KGreedyArray[carId][0].pop() 
+                self.KGreedyArray[carId][1].pop()
                 return re[0]
             
         else:
-            print 'Greedy  kstep : ',self.KGreedyQueue.list[::-1]
-            print 'Greedy RGstep : ',self.KGreedyRegretQueue.list[::-1]
-            greedyStep = self.KGreedyQueue.pop()
-            regretStep = self.KGreedyRegretQueue.pop() 
+            #print carId,'\'s Greedy  kstep : ',self.KGreedyArray[carId][0].list[::-1]
+            #print carId,'\'s Greedy RGstep : ',self.KGreedyArray[carId][1].list[::-1]
+            greedyStep = self.KGreedyArray[carId][0].pop()
+            regretStep = self.KGreedyArray[carId][1].pop() 
             
             if(greedyStep in state.getSucc(carId)):
                 return greedyStep
             #elif(regretStep in state.getSucc(carId)):
             #    return regretStep 
             else:
-                self.KGreedyQueue= imp.load_source('Queue', './AI_ref/util.py').Queue()
-                self.KGreedyRegretQueue = imp.load_source('Stack', './AI_ref/util.py').Queue()
+                KGreedyQueue= imp.load_source('Queue', './AI_ref/util.py').Queue()
+                KGreedyRegretQueue = imp.load_source('Queue', './AI_ref/util.py').Queue()
+                self.KGreedyArray[carId] = (KGreedyQueue,KGreedyRegretQueue)
                 return self.KGreedyAStar(carId,state,hueristic,ch,cc)
                 
                 
