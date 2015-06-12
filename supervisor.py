@@ -17,7 +17,7 @@ class Supervisor:
     # _map includes
     #    method for moving a car( e.g., map.moveCar(car, from, to) )
     # _cars includes the cars and it type, priority and speed
-    def __init__(self, _numberOfCars,_mapWidth,_mapHeight):
+    def __init__(self, _numberOfCars,_mapWidth,_mapHeight,_AIName):
         self.numberOfCars = _numberOfCars
 
         self.state = State(_mapWidth, _mapHeight)
@@ -27,7 +27,7 @@ class Supervisor:
 
 
         # AI
-        self.ai = AI(_numberOfCars)
+        self.ai = AI(_numberOfCars,_AIName)
 
         # Initializing the remain moves of cars
         self.carMovesRemain = []
@@ -45,7 +45,8 @@ class Supervisor:
         #    car.speed : 1, 2, 3
         #
         #    car.getNextLocation(gameState) : return next location of the car
-
+    def setAI(self,_AIName):
+        self.ai = AI(self.numberOfCars,_AIName)
     def start(self):
 
         # for car in cars:
@@ -161,18 +162,21 @@ class Supervisor:
 
 
 if __name__ == '__main__':
-    numberOfCars = 20
-    mSupervisor = Supervisor(numberOfCars,30,30)
-    mState = mSupervisor.state
-    mAI = mSupervisor.ai
+    numberOfCars = 10
+    mSupervisor_1 = Supervisor(numberOfCars,30,30,'KGreedyAStar')
+    mSupervisor_2 = copy.deepcopy(mSupervisor_1)
+    mSupervisor_2.setAI("RandomWalk")
+
+    mState = mSupervisor_1.state
+    mAI = mSupervisor_1.ai
     counter = 0
     maxTurns = numberOfCars*140
     mapsForDrawer = []
 
-    r = RedisQueue('key')
-    r.flushall()
+    #r = RedisQueue('key')
+    #r.flushall()
     
-    while (not mSupervisor.isGoal(mState)) and (counter < maxTurns):
+    while (not mSupervisor_1.isGoal(mState)) and (counter < maxTurns):
         for car_i in range(numberOfCars):
             # Progress bar
             
@@ -185,16 +189,41 @@ if __name__ == '__main__':
             nextAction = mAI.getNextAction(car_i, mState)
             mState = mState.getStateByAction(car_i, nextAction)
             counter = counter + 1
-            
-
-    
-        
-        print '\n***************************************************************'
-        #time.sleep(0.2)
-        mState.printMap()    
-        
-        mapsForDrawer.append(copy.deepcopy(mState.getMap().astype(int)))
-        r.put(mapsForDrawer)
-        mapsForDrawer = []
+        #print '\n***************************************************************'
+        #mState.printMap()    
+        #mapsForDrawer.append(copy.deepcopy(mState.getMap().astype(int)))
+        #r.put(mapsForDrawer)
+        #mapsForDrawer = []
     #print '\n',
-    mSupervisor.printArrivedRatio(mState)
+    mSupervisor_1.printArrivedRatio(mState)
+
+
+    mState = mSupervisor_2.state
+    mAI = mSupervisor_2.ai
+    counter = 0
+    maxTurns = numberOfCars*140
+    mapsForDrawer = []
+
+    #r = RedisQueue('key')
+    #r.flushall()
+
+    while (not mSupervisor_2.isGoal(mState)) and (counter < maxTurns):
+        for car_i in range(numberOfCars):
+            # Progress bar
+
+
+            sys.stdout.write('\r')
+            i = int(round((20*(0.01+counter))/maxTurns))
+            sys.stdout.write("[%-20s] %d%%" % ('='*i, 5*i))
+            sys.stdout.flush()
+
+            nextAction = mAI.getNextAction(car_i, mState)
+            mState = mState.getStateByAction(car_i, nextAction)
+            counter = counter + 1
+        #print '\n***************************************************************'
+        #mState.printMap()    
+        #mapsForDrawer.append(copy.deepcopy(mState.getMap().astype(int)))
+        #r.put(mapsForDrawer)
+        #mapsForDrawer = []
+    #print '\n',
+    mSupervisor_2.printArrivedRatio(mState)

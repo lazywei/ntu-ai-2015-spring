@@ -4,8 +4,8 @@ from state import Car
 import math
 import imp
 class AI:
+    AIName = 'randomWalk'
     KGreedyArray = []
-
     K =7
     def getNextAction(self,carId, state):
         """if state.cars.search=="UCS":"""
@@ -13,10 +13,18 @@ class AI:
         #action = self.BFS(carId,state)
         #action = self.AStar(carId,state,self.hueristic_manDist)
         action = self.KGreedyAStar(carId,state,self.hueristic_manDist)
-
+        if(self.AIName =='BFS'):
+            action = self.BFS(carId,state)
+        elif(self.AIName =='AStar'):
+            action = self.AStar(carId,state,self.hueristic_manDist)
+        elif(self.AIName =='KGreedyAStar'):
+            action = self.KGreedyAStar(carId,state,self.hueristic_manDist)
+        else:
+            action = self.randomWalk(carId,state)
         return action
 
-    def __init__(self,_numberOfCars):
+    def __init__(self,_numberOfCars,_AIName):
+        self.AIName = _AIName
         for i in range(_numberOfCars):
             KGreedyQueue= imp.load_source('Queue', './AI_ref/util.py').Queue()
             KGreedyRegretQueue = imp.load_source('Queue', './AI_ref/util.py').Queue()
