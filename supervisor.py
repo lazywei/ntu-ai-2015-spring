@@ -2,14 +2,16 @@ import numpy as np
 import random
 import copy
 import sys
+
 from state import State
 from state import Car
+from datetime import datetime
 
 from interactive import RedisQueue
 from AI import AI
 import os
 import time
-
+import pickle
 
 # import Drawer
 
@@ -162,65 +164,151 @@ class Supervisor:
 
 
 if __name__ == '__main__':
-    numberOfCars = 10
-    mSupervisor_1 = Supervisor(numberOfCars,30,30,'KGreedyAStar')
-    mSupervisor_2 = copy.deepcopy(mSupervisor_1)
-    mSupervisor_2.setAI("RandomWalk")
 
-    mState = mSupervisor_1.state
-    mAI = mSupervisor_1.ai
-    counter = 0
-    maxTurns = numberOfCars*140
-    mapsForDrawer = []
 
-    r = RedisQueue('key')
-    r.flushall()
+    X=[]
+    KGreedyAStarResult=[]
+    AStarResult=[]
+    BFSResult=[]
+
+    StartSize=30
     
-    while (not mSupervisor_1.isGoal(mState)) and (counter < maxTurns):
-        for car_i in range(numberOfCars):
-            # Progress bar
-            sys.stdout.write('\r')
-            i = int(round((20*(0.01+counter))/maxTurns))
-            sys.stdout.write("[%-20s] %d%%" % ('='*i, 5*i))
-            sys.stdout.flush()
-            
-            nextAction = mAI.getNextAction(car_i, mState)
-            mState = mState.getStateByAction(car_i, nextAction)
-            counter = counter + 1
-        #print '\n***************************************************************'
-        #mState.printMap()    
-        mapsForDrawer.append(copy.deepcopy(mState.getMap().astype(int)))
-        r.put(mapsForDrawer)
+    EndSize =70
+    
+    CurrentSize =StartSize
+    
+    numberOfCars = 5
+    
+    while  CurrentSize<=EndSize:
+
+        
+        X.append(CurrentSize)
+    
+        mSupervisor_1 = Supervisor(numberOfCars,CurrentSize,CurrentSize,'KGreedyAStar')
+        mSupervisor_2 = copy.deepcopy(mSupervisor_1)
+        mSupervisor_2.setAI("AStar")
+        mSupervisor_3 = copy.deepcopy(mSupervisor_1)
+        mSupervisor_3.setAI("BFS")
+
+#####################################################################################
+        mState = mSupervisor_1.state
+        mAI = mSupervisor_1.ai
+        counter = 0
+        maxTurns = numberOfCars  *  StartSize*2
         mapsForDrawer = []
-    #print '\n',
-    mSupervisor_1.printArrivedRatio(mState)
 
-'''
-    mState = mSupervisor_2.state
-    mAI = mSupervisor_2.ai
-    counter = 0
-    maxTurns = numberOfCars*140
-    mapsForDrawer = []
+        r = RedisQueue('key')
+        r.flushall()
 
-    r = RedisQueue('key')
-    r.flushall()
-
-    while (not mSupervisor_2.isGoal(mState)) and (counter < maxTurns):
-        for car_i in range(numberOfCars):
-            # Progress bar
-            sys.stdout.write('\r')
-            i = int(round((20*(0.01+counter))/maxTurns))
-            sys.stdout.write("[%-20s] %d%%" % ('='*i, 5*i))
-            sys.stdout.flush()
-
-            nextAction = mAI.getNextAction(car_i, mState)
-            mState = mState.getStateByAction(car_i, nextAction)
-            counter = counter + 1
-        #print '\n***************************************************************'
-        #mState.printMap()    
-        mapsForDrawer.append(copy.deepcopy(mState.getMap().astype(int)))
-        r.put(mapsForDrawer)
+        now = datetime.now()
+      
+        while (not mSupervisor_1.isGoal(mState)) and (counter < maxTurns):
+            for car_i in range(numberOfCars):
+                # Progress bar
+                sys.stdout.write('\r')
+                i = int(round((20*(0.01+counter))/maxTurns))
+                sys.stdout.write("[%-20s] %d%%" % ('='*i, 5*i))
+                sys.stdout.flush()
+                
+                nextAction = mAI.getNextAction(car_i, mState)
+                mState = mState.getStateByAction(car_i, nextAction)
+                counter = counter + 1
+            #print '\n***************************************************************'
+            #mState.printMap()    
+            mapsForDrawer.append(copy.deepcopy(mState.getMap().astype(int)))
+            r.put(mapsForDrawer)
+            mapsForDrawer = []
+        print '\n',
+        
+        then = datetime.now()
+        tdelta = then - now   
+        seconds = tdelta.total_seconds()   
+        print 'Running time of K-Greedy',seconds
+        KGreedyAStarResult.append(seconds)
+        
+        mSupervisor_1.printArrivedRatio(mState)
+        
+    ###########################################################################################
+        mState = mSupervisor_2.state
+        mAI = mSupervisor_2.ai
+        counter = 0
+        maxTurns = numberOfCars*140
         mapsForDrawer = []
-    #print '\n',
-    mSupervisor_2.printArrivedRatio(mState)
-'''
+
+        r = RedisQueue('key')
+        r.flushall()
+
+
+        now = datetime.now()
+        while (not mSupervisor_2.isGoal(mState)) and (counter < maxTurns):
+            for car_i in range(numberOfCars):
+                # Progress bar
+                sys.stdout.write('\r')
+                i = int(round((20*(0.01+counter))/maxTurns))
+                sys.stdout.write("[%-20s] %d%%" % ('='*i, 5*i))
+                sys.stdout.flush()
+
+                nextAction = mAI.getNextAction(car_i, mState)
+                mState = mState.getStateByAction(car_i, nextAction)
+                counter = counter + 1
+            #print '\n***************************************************************'
+            #mState.printMap()    
+            mapsForDrawer.append(copy.deepcopy(mState.getMap().astype(int)))
+            r.put(mapsForDrawer)
+            mapsForDrawer = []
+        print '\n',
+        
+        then = datetime.now()
+        tdelta = then - now   
+        seconds = tdelta.total_seconds()   
+        print 'Running time of AStar   ',seconds
+        AStarResult.append(seconds)
+        
+        mSupervisor_2.printArrivedRatio(mState)
+        
+    ###########################################################################################
+        mState = mSupervisor_3.state
+        mAI = mSupervisor_3.ai
+        counter = 0
+        maxTurns = numberOfCars*140
+        mapsForDrawer = []
+
+        r = RedisQueue('key')
+        r.flushall()
+
+
+        now = datetime.now()
+        while (not mSupervisor_3.isGoal(mState)) and (counter < maxTurns):
+            for car_i in range(numberOfCars):
+                # Progress bar
+                sys.stdout.write('\r')
+                i = int(round((20*(0.01+counter))/maxTurns))
+                sys.stdout.write("[%-20s] %d%%" % ('='*i, 5*i))
+                sys.stdout.flush()
+
+                nextAction = mAI.getNextAction(car_i, mState)
+                mState = mState.getStateByAction(car_i, nextAction)
+                counter = counter + 1
+            #print '\n***************************************************************'
+            #mState.printMap()    
+            mapsForDrawer.append(copy.deepcopy(mState.getMap().astype(int)))
+            r.put(mapsForDrawer)
+            mapsForDrawer = []
+        print '\n',
+        
+        then = datetime.now()
+        tdelta = then - now   
+        seconds = tdelta.total_seconds()   
+        print 'Running time of BFS     : ',seconds
+        BFSResult.append(seconds)
+        
+        mSupervisor_3.printArrivedRatio(mState)
+        
+        
+    ###########################################################################################  
+        filename = './Results/3algo_'+str(numberOfCars)+'.out'
+        f1=open(filename, 'w+')
+          
+        line = str(X).strip('[]')+'\n'+str(KGreedyAStarResult).strip('[]')+'\n'+str(AStarResult).strip('[]')+'\n'+str(BFSResult).strip('[]')+'\n**********************\n'
+        f1.write(line)
+        CurrentSize+=5
