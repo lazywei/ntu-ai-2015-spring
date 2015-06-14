@@ -17,6 +17,8 @@ class AI:
             action = self.BFS(carId,state)
         elif(self.AIName =='AStar'):
             action = self.AStar(carId,state,self.hueristic_manDist)
+        elif(self.AIName =='hueristic'):
+            action = self.PureHueristic()
         elif(self.AIName =='KGreedyAStar'):
             action = self.KGreedyAStar(carId,state,self.hueristic_manDist)
         else:
@@ -36,6 +38,9 @@ class AI:
             return 'none'
         else :
             return random.sample(state.getSucc(carId),1)[0]
+
+    def PureHueristic():
+        return 'none'
 
     def BFS(self,carId,state):
 
