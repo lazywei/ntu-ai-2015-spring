@@ -1,6 +1,14 @@
 # ntu-ai-2015-spring
 NTU Introduction to AI 2015 spring Final Project
 
+## Author list
+
+1. B00201015 洪仲言
+2. B00201037 張志瑋
+3. R03922125 賴洋
+4. R03922134 鍾文藍
+5. R03944030 羅國宣     Skype :tonylo2ooo
+
 ## Requirement
 
 1. install [redis] (http://redis.io/topics/quickstart)
