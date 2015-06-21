@@ -3,6 +3,61 @@ from state import State
 from state import Car
 import math
 import imp
+
+from collections import deque
+
+class Graph:
+    def __init__(self):
+        V=[]
+    def Add(self,v):
+        V.append(v)
+    def Clear(self):
+        V.clear()
+    def PrintEdge(self):
+        for u in self.V:
+            print u.name + " -> ",
+            for (v,e) in u.p:
+                print "("+v.name+","+str(e)+")",
+            print
+
+class Node:
+    def __init__(self,name):
+        self.name=name
+        self.p=[]
+    def AddEdge(self,v,e=0):
+        self.p.append((v,e))
+
+def BFS_sub(root,exp):
+    q=deque()
+
+    q.append(root)
+    exp[root]=1
+
+    while len(q) != 0:
+        t=q.pop()
+        print t.name + ", ",
+        exp[t]=2
+
+        for (v,e) in t.p:
+            if v not in exp:
+                q.append(v)
+                exp[v]=1
+        exp[t]=3
+def BFS(G,root):
+    exp={}
+    BFS_sub(root,exp)
+    for v in G.V:
+        if v not in exp:
+            BFS_sub(v,exp)
+    print
+
+
+
+
+
+
+
+
 class AI:
     AIName = 'randomWalk'
     KGreedyArray = []
