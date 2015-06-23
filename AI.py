@@ -2,23 +2,38 @@ import random
 from state import State
 from state import Car
 import math
+import sys
 import imp
 
 from collections import deque
+import numpy
+import math
 
 class Graph:
     def __init__(self):
-        V=[]
+        self.V=[]
     def Add(self,v):
-        V.append(v)
+        self.V.append(v)
     def Clear(self):
-        V.clear()
+        self.V.clear()
     def PrintEdge(self):
         for u in self.V:
             print u.name + " -> ",
             for (v,e) in u.p:
-                print "("+v.name+","+str(e)+")",
+                if v!=None:
+                    print "("+v.name+","+str(e)+")",
+                else:
+                    print "("+"None"+","+str(e)+")",
             print
+    def _PrintChild(self,root,indent):
+        #v = self.V[root]
+        for (u,e) in root.p:
+            for i in range(indent): print "\t",
+            print "%s, %f"%(u.name,e)
+            self._PrintChild(u,indent+1)
+    def Print(self,root):
+        print "%s"%(root.name)
+        self._PrintChild(root,1)
 
 class Node:
     def __init__(self,name):
@@ -26,6 +41,8 @@ class Node:
         self.p=[]
     def AddEdge(self,v,e=0):
         self.p.append((v,e))
+    def Adj(self):
+        return [ v for (v,e) in self.p ]
 
 def BFS_sub(root,exp):
     q=deque()
@@ -50,10 +67,6 @@ def BFS(G,root):
         if v not in exp:
             BFS_sub(v,exp)
     print
-
-
-
-
 
 
 
@@ -94,8 +107,7 @@ class AI:
         else :
             return random.sample(state.getSucc(carId),1)[0]
 
-    def PureHueristic():
-        return 'none'
+
 
     def BFS(self,carId,state):
 
@@ -345,46 +357,154 @@ simple test code for my script
 emulate the supervisor
 
 -----------------------------------------------------------------------------"""
-if __name__ == '__main__':
-    n_cars = 2
-    a = State()
-    ai = AI()
-
-    # ---------------------------------------------------------------------------
-    # Lai, question1, how to generate cars ?
-
-    choice = 3
-
-    if choice==1:
-    # choice 1, 1 block left, still could generate car
-        a.currentMap[:,:] = -2
-        a.currentMap[1,1] = -1
-    elif choice==2:
-    # choice 2, no block left, can't generate car
-        a.currentMap[:,:] = -2
-
-    # ---------------------------------------------------------------------------
-    
-    a.generateCars(n_cars)
-    a.printMap()
-
-
-    #TestIfGoal(a)
-    print "0 in now at : ",; print a.getCarById(0).location
-    
-    action = ai.getNextAction(0, a)
-    if action==[]:
-        print "No route"
+def BC(x,y):
+    if x>=0 and x<30 and y>=0 and y<30:
+        return True
     else:
-        print "Action: ",; print action
-        print "0's turn, next state : ",; print a.getStateByAction(0,action).getCarById(0).location
-    print "End of script"
+        return False
+def CR(map,x,y):
+    r=0
+    if x-1<0 or map[x-1][y]==-1 or map[x-1][y]>=0:
+        r+=1
+    if x+1>=30 or map[x+1][y]==-1 or map[x+1][y]>=0:
+        r+=1
+    if y-1<0 or map[x][y-1]==-1 or map[x][y-1]>=0:
+        r+=1
+    if y+1>=30 or map[x][y+1]==-1 or map[x][y+1]>=0:
+        r+=1
+    return r
+def TR(map,x,y,dir,Vdic):
+    ofx={ "up":-1, "down":1, "right":0, "left":0 }
+    ofy={ "up":0, "down":0, "right":1, "left":-1 }
+    dis=0
+    x=x+ofx[dir]; y=y+ofy[dir]
+    while BC( x,y ) and map[x][y]!=-2:
+        dis=dis+1
+        if (x,y) in Vdic: return (dis,Vdic[(x,y)])
+        x=x+ofx[dir]; y=y+ofy[dir]
+    return (dis,None)
+def MapToGraph(map):
+    G=Graph()
+    # build all nodes
+    Vdic={}
+    for x in range(h):
+        for y in range(w):
+            if CR(map,x,y)==4:
+                v=Node( str((x,y)) )
+                Vdic[ (x,y) ] = v
+                G.Add(v)
+    # build edge
+    for x in range(h):
+        for y in range(w):
+            if (x,y) in Vdic:
+                v=Vdic[ (x,y) ]
+                dirs=["up", "down", "right", "left"]
+                for dir in dirs:
+                    (e,u) = TR(map,x,y,dir,Vdic)
+                    if u!=None:
+                        #print v.name
+                        v.AddEdge(u,e-1)
+                    else:
+                        u=Node( dir )
+                        G.Add(u)
+                        v.AddEdge(u,e)
+    return (G,Vdic)
+def CarEdge(G,Vdic,state):
+    Edic={}; Cdic={}
+    map=a.currentMap
+    for i in range(len(state.getCars())):
+        car=state.getCarById(i)
+        (x,y) = car.location
+        dirs=["up", "down", "right", "left"]
+        con=[]
+        for dir in dirs:
+            (e,v)=TR(map,x,y,dir,Vdic)
+            con.append( (e,v,dir) )
+        if (x,y) in Vdic:
+            # Dirty ################################
+            con.sort(); con.reverse()
+            v=Vdic[(x,y)]; u=con[0][1]
+            if u==None:
+                for u in v.Adj():
+                    if u.name==con[0][2]: break
+            pass
+        elif con[0][1]!=None or con[1][1]!=None:
+            v=con[0][1]; u=con[1][1]
+            if u==None:
+                for u in v.Adj():
+                    if u.name==con[1][2]: break
+            if v==None:
+                for v in u.Adj():
+                    if v.name==con[0][2]: break
+            pass
+        elif con[2][1]!=None or con[3][1]!=None:
+            v=con[2][1]; u=con[3][1]
+            if u==None:
+                for u in v.Adj():
+                    if u.name==con[3][2]: break
+            if v==None:
+                for v in u.Adj():
+                    if v.name==con[2][2]: break
+            pass
+        Cdic[i]=(v,u)
+        if (v,u) not in Edic: Edic[(v,u)]=[]
+        Edic[(v,u)].append(i)
+        if (u,v) not in Edic: Edic[(u,v)]=[]
+        Edic[(u,v)].append(i)
+    return (Edic,Cdic)
+def IfSave(Edic,Cdic):
+    dirs=["up", "down", "right", "left"]
+    f=True
+    for (v,u) in Edic:
+        cap=0
+        for (p,e) in v.p:
+            if p!=u: cap=cap+e-len(Edic[(v,p)])
+        for (p,e) in u.p:
+            if p!=v: cap=cap+e-len(Edic[(u,p)])
+        if cap<=len(Edic[(v,u)]): f=False
+    return f
+
+if __name__ == '__main__':
+    n_car=120
+    w=30; h=30
+    a = State(30,30)
+    ai = AI(n_car,"KGreedyAStar")
+    a.generateCars(n_car)
+    #a.printMap()
     
-    print a.getCarById(0).destination
-    print "man= ",
-    print ai.hueristic_manDist(0,a)
-    print "euc= ",
-    print ai.hueristic_eucDist(0,a)
+    """
+    for x in range(h):
+        for y in range(w):
+            if a.currentMap[x][y]==-2:
+                sys.stdout.write("\219\219")
+            elif a.currentMap[x][y]==-1:
+                sys.stdout.write("  ")
+            elif a.currentMap[x][y]>=0:
+                sys.stdout.write("OO")
+            #sys.stdout.write( "%2d"%(int(a.currentMap[x][y])) )
+        sys.stdout.write("\n")
+    """
+    (G,Vdic) = MapToGraph(a.currentMap)
+    (Edic,Cdic) = CarEdge(G,Vdic,a)
+    #G.PrintEdge()
+    """
+    for i in range(len(a.getCars())):
+        print Cdic[i]
+        """
+    
+    for v in Vdic.itervalues():
+        for u in v.Adj():
+            if (v,u) not in Edic:
+                Edic[(v,u)]=[]
+                Edic[(u,v)]=[]
+    """
+    for v in Vdic.itervalues():
+        for u in v.Adj():
+            if (v,u) in Edic:
+                print len(Edic[(v,u)]),
+    print
+    """
+    print IfSave(Edic,Cdic)
     exit()
 
 """
